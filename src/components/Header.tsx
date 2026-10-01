@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import Icon from "./Icon";
 
 const navItems = [
   { href: "/workflows", label: "Workflows" },
@@ -27,14 +26,20 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "glass shadow-lg shadow-black/20"
-          : "bg-transparent"
+          ? "py-2"
+          : "py-4"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 md:h-20">
+        <div
+          className={`flex justify-between items-center px-4 py-3 rounded-2xl transition-all duration-500 ${
+            isScrolled
+              ? "glass shadow-xl shadow-black/20"
+              : "bg-transparent"
+          }`}
+        >
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative w-10 h-10">
@@ -48,24 +53,24 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Navigation Desktop */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Navigation Desktop - Pill Style */}
+          <nav className="hidden md:flex items-center bg-[#111118]/50 backdrop-blur rounded-full p-1.5 border border-[#2a2a3a]/50">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  className={`relative px-5 py-2 text-sm font-medium rounded-full transition-all duration-300 ${
                     isActive
-                      ? "text-white"
-                      : "text-gray-400 hover:text-white hover:bg-white/5"
+                      ? "text-white bg-gradient-to-r from-indigo-500/20 to-amber-500/20"
+                      : "text-gray-400 hover:text-white"
                   }`}
                 >
-                  {item.label}
                   {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-gradient-to-r from-indigo-500 to-amber-500 rounded-full" />
+                    <span className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500/10 to-amber-500/10 border border-indigo-500/20" />
                   )}
+                  <span className="relative">{item.label}</span>
                 </Link>
               );
             })}
@@ -75,7 +80,7 @@ export default function Header() {
           <div className="hidden md:flex items-center gap-3">
             <Link
               href="/workflows"
-              className="btn-shine relative px-5 py-2.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-lg font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-200"
+              className="btn-shine relative px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-full font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-105 transition-all duration-300"
             >
               Explorer
             </Link>
@@ -110,10 +115,10 @@ export default function Header() {
         {/* Mobile menu */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ${
-            isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+            isMenuOpen ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
           }`}
         >
-          <nav className="py-4 space-y-1">
+          <nav className="py-4 space-y-1 glass rounded-2xl p-2">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -121,7 +126,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block px-4 py-3 rounded-lg font-medium transition-all ${
+                  className={`block px-4 py-3 rounded-xl font-medium transition-all ${
                     isActive
                       ? "text-white bg-gradient-to-r from-indigo-500/10 to-amber-500/10 border border-indigo-500/20"
                       : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -134,7 +139,7 @@ export default function Header() {
             <Link
               href="/workflows"
               onClick={() => setIsMenuOpen(false)}
-              className="block mt-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-lg font-medium text-center"
+              className="block mt-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-center"
             >
               Explorer
             </Link>
