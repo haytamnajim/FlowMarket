@@ -34,10 +34,10 @@ export default function Header() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div
-          className={`flex justify-between items-center px-4 py-3 rounded-2xl transition-all duration-500 ${
+          className={`flex justify-between items-center px-4 py-3 transition-all duration-500 ${
             isScrolled
-              ? "glass shadow-xl shadow-black/20"
-              : "bg-[#0a0a0f]"
+              ? "glass shadow-xl shadow-black/20 rounded-2xl"
+              : "bg-[#0a0a0f] rounded-b-2xl"
           }`}
         >
           {/* Logo */}
