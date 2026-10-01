@@ -37,7 +37,7 @@ export default function Header() {
           className={`flex justify-between items-center px-4 py-3 rounded-2xl transition-all duration-500 ${
             isScrolled
               ? "glass shadow-xl shadow-black/20"
-              : "bg-transparent"
+              : "bg-[#0a0a0f]"
           }`}
         >
           {/* Logo */}
