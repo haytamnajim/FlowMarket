@@ -18,14 +18,14 @@ export interface Workflow {
 }
 
 export const categories = [
-  { id: "marketing", name: "Marketing", icon: "📣" },
-  { id: "productivity", name: "Productivité", icon: "⚡" },
-  { id: "ecommerce", name: "E-commerce", icon: "🛒" },
-  { id: "hr", name: "RH & Recrutement", icon: "👥" },
-  { id: "finance", name: "Finance", icon: "💰" },
-  { id: "dev", name: "Développement", icon: "💻" },
-  { id: "ai", name: "Intelligence Artificielle", icon: "🤖" },
-  { id: "social", name: "Réseaux Sociaux", icon: "📱" },
+  { id: "marketing", name: "Marketing", icon: "marketing" },
+  { id: "productivity", name: "Productivité", icon: "productivity" },
+  { id: "ecommerce", name: "E-commerce", icon: "ecommerce" },
+  { id: "hr", name: "RH & Recrutement", icon: "hr" },
+  { id: "finance", name: "Finance", icon: "finance" },
+  { id: "dev", name: "Développement", icon: "dev" },
+  { id: "ai", name: "Intelligence Artificielle", icon: "ai" },
+  { id: "social", name: "Réseaux Sociaux", icon: "social" },
 ];
 
 export const workflows: Workflow[] = [
