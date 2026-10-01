@@ -10,18 +10,18 @@ export default function Home() {
   return (
     <main>
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+      <section className="relative min-h-[100vh] overflow-hidden">
         <HeroBackground />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 z-10">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 z-10">
           <div className="text-center max-w-5xl mx-auto">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-8">
+            <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-6">
               <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
               <span className="text-sm text-gray-400">+200 workflows disponibles</span>
             </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] tracking-tight">
               Automatisez votre{" "}
               <span className="relative">
                 <span className="gradient-text">business</span>
@@ -39,12 +39,12 @@ export default function Home() {
               en quelques clics
             </h1>
 
-            <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
               Des centaines de workflows n8n testés et optimisés. Importez, personnalisez,
               automatisez. Gagnez des heures chaque semaine.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
               <Link
                 href="/workflows"
                 className="btn-shine relative px-8 py-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
@@ -60,7 +60,7 @@ export default function Home() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 mt-20 max-w-lg mx-auto">
+            <div className="grid grid-cols-3 gap-6 mt-8 max-w-lg mx-auto">
               {[
                 { value: "200+", label: "Workflows" },
                 { value: "500+", label: "Clients" },
@@ -71,6 +71,26 @@ export default function Home() {
                   <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
                 </div>
               ))}
+            </div>
+
+            {/* Trust Badges */}
+            <div className="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3 text-sm text-gray-500">
+              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                Garantie 30j
+              </span>
+              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                Paiement sécurisé
+              </span>
+              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                Accès immédiat
+              </span>
+              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                Support inclus
+              </span>
             </div>
           </div>
         </div>
