@@ -8,7 +8,7 @@ export default function Home() {
   const featuredWorkflows = getFeaturedWorkflows();
 
   return (
-    <main className="pt-16">
+    <main>
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center overflow-hidden">
         <HeroBackground />
