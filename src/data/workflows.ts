@@ -18,14 +18,86 @@ export interface Workflow {
 }
 
 export const categories = [
-  { id: "marketing", name: "Marketing", icon: "marketing" },
-  { id: "productivity", name: "Productivité", icon: "productivity" },
-  { id: "ecommerce", name: "E-commerce", icon: "ecommerce" },
-  { id: "hr", name: "RH & Recrutement", icon: "hr" },
-  { id: "finance", name: "Finance", icon: "finance" },
-  { id: "dev", name: "Développement", icon: "dev" },
-  { id: "ai", name: "Intelligence Artificielle", icon: "ai" },
-  { id: "social", name: "Réseaux Sociaux", icon: "social" },
+  { 
+    id: "marketing", 
+    name: "Marketing", 
+    icon: "marketing",
+    color: "from-pink-500 to-rose-500",
+    bgColor: "from-pink-500/10 to-rose-500/10",
+    borderColor: "border-pink-500/20",
+    hoverColor: "hover:border-pink-500/50",
+    description: "Automatisez vos campagnes et générez des leads"
+  },
+  { 
+    id: "productivity", 
+    name: "Productivité", 
+    icon: "productivity",
+    color: "from-emerald-500 to-teal-500",
+    bgColor: "from-emerald-500/10 to-teal-500/10",
+    borderColor: "border-emerald-500/20",
+    hoverColor: "hover:border-emerald-500/50",
+    description: "Gagnez du temps au quotidien"
+  },
+  { 
+    id: "ecommerce", 
+    name: "E-commerce", 
+    icon: "ecommerce",
+    color: "from-orange-500 to-amber-500",
+    bgColor: "from-orange-500/10 to-amber-500/10",
+    borderColor: "border-orange-500/20",
+    hoverColor: "hover:border-orange-500/50",
+    description: "Boostez vos ventes en ligne"
+  },
+  { 
+    id: "hr", 
+    name: "RH & Recrutement", 
+    icon: "hr",
+    color: "from-violet-500 to-purple-500",
+    bgColor: "from-violet-500/10 to-purple-500/10",
+    borderColor: "border-violet-500/20",
+    hoverColor: "hover:border-violet-500/50",
+    description: "Simplifiez le recrutement et l'onboarding"
+  },
+  { 
+    id: "finance", 
+    name: "Finance", 
+    icon: "finance",
+    color: "from-yellow-500 to-lime-500",
+    bgColor: "from-yellow-500/10 to-lime-500/10",
+    borderColor: "border-yellow-500/20",
+    hoverColor: "hover:border-yellow-500/50",
+    description: "Automatisez la comptabilité et facturation"
+  },
+  { 
+    id: "dev", 
+    name: "Développement", 
+    icon: "dev",
+    color: "from-blue-500 to-cyan-500",
+    bgColor: "from-blue-500/10 to-cyan-500/10",
+    borderColor: "border-blue-500/20",
+    hoverColor: "hover:border-blue-500/50",
+    description: "Accélérez le déploiement et le monitoring"
+  },
+  { 
+    id: "ai", 
+    name: "Intelligence Artificielle", 
+    icon: "ai",
+    color: "from-indigo-500 to-violet-500",
+    bgColor: "from-indigo-500/10 to-violet-500/10",
+    borderColor: "border-indigo-500/20",
+    hoverColor: "hover:border-indigo-500/50",
+    description: "Intégrez l'IA dans vos processus"
+  },
+  { 
+    id: "social", 
+    name: "Réseaux Sociaux", 
+    icon: "social",
+    color: "from-red-500 to-pink-500",
+    bgColor: "from-red-500/10 to-pink-500/10",
+    borderColor: "border-red-500/20",
+    hoverColor: "hover:border-red-500/50",
+    description: "Gérez et automatisez vos réseaux sociaux"
+  },
 ];
 
 export const workflows: Workflow[] = [

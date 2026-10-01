@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getFeaturedWorkflows, categories } from "@/data/workflows";
+import { getFeaturedWorkflows, categories, getWorkflowsByCategory } from "@/data/workflows";
 import WorkflowCard from "@/components/WorkflowCard";
 import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
@@ -109,19 +109,44 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {categories.map((cat) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {categories.map((cat, index) => (
               <Link
                 key={cat.id}
                 href={`/workflows?category=${cat.id}`}
-                className="bg-[#111118] rounded-2xl p-6 text-center border border-[#2a2a3a] card-hover group"
+                className={`relative overflow-hidden bg-[#111118] rounded-2xl p-6 text-center border ${cat.borderColor} card-hover group transition-all duration-500 ${cat.hoverColor}`}
+                style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-gradient-to-br from-indigo-500/20 to-amber-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Icon name={cat.icon} className="w-6 h-6 text-indigo-400" />
+                {/* Gradient overlay */}
+                <div className={`absolute inset-0 bg-gradient-to-br ${cat.bgColor} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                
+                {/* Icon container */}
+                <div className={`relative w-14 h-14 mx-auto mb-4 rounded-xl bg-gradient-to-br ${cat.bgColor} flex items-center justify-center group-hover:scale-110 transition-transform duration-500`}>
+                  <div className={`absolute inset-0 bg-gradient-to-br ${cat.color} opacity-0 group-hover:opacity-20 transition-opacity duration-500 rounded-xl`} />
+                  <Icon name={cat.icon} className={`relative w-7 h-7 transition-colors duration-300 ${cat.color.replace('from-', 'text-').replace(' to-', '')}`} />
                 </div>
-                <h3 className="font-semibold text-white group-hover:text-indigo-400 transition-colors">
+                
+                <h3 className="relative font-semibold text-white group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-amber-400 transition-all duration-300">
                   {cat.name}
                 </h3>
+                
+                {/* Description */}
+                <p className="relative mt-3 text-sm text-gray-500 group-hover:text-gray-400 transition-colors duration-300">
+                  {cat.description}
+                </p>
+                
+                {/* Workflow count */}
+                <div className="relative mt-4">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0a0a0f]/50 backdrop-blur border border-[#2a2a3a] text-xs font-medium text-gray-400 group-hover:border-indigo-500/50 group-hover:text-indigo-400 transition-all duration-300">
+                    <Icon name="bolt" className="w-3 h-3" />
+                    {getWorkflowsByCategory(cat.id).length} workflows
+                  </span>
+                </div>
+                
+                {/* Arrow indicator */}
+                <div className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-[#0a0a0f]/50 backdrop-blur border border-[#2a2a3a] flex items-center justify-center opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-300">
+                  <Icon name="arrowRight" className="w-4 h-4 text-gray-500 group-hover:text-indigo-400 transition-colors" />
+                </div>
               </Link>
             ))}
           </div>
