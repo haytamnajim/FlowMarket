@@ -34,6 +34,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 /* Custom scrollbar */
@@ -65,6 +67,7 @@ body {
 /* Smooth scroll */
 html {
   scroll-behavior: smooth;
+  background: var(--background);
 }
 
 /* Glassmorphism */
