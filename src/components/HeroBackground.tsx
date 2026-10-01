@@ -20,7 +20,7 @@ export default function HeroBackground() {
             videoLoaded ? "opacity-40" : "opacity-0"
           }`}
         >
-          <source src="/videos/Workflow_automation_canvas_anima._20261001152644.mp4" type="video/mp4" />
+          <source src="/videos/hero-workflow.mp4" type="video/mp4" />
         </video>
       </div>
 
