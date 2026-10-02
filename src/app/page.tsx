@@ -361,7 +361,7 @@ export default function Home() {
                 playsInline
                 className="w-full h-full object-cover opacity-50"
               >
-                <source src="/videos/cta-interface.mp4" type="video/mp4" />
+                <source src="/videos/cta-canvas.mp4" type="video/mp4" />
               </video>
             </div>
 
