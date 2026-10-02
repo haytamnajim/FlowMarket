@@ -192,61 +192,161 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="py-24 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/5 to-transparent" />
+      {/* How it works - Modern Design */}
+      <section className="py-28 relative overflow-hidden">
+        {/* Background atmosphere */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/3 via-amber-500/3 to-transparent" />
+        <div className="absolute inset-0 bg-grid opacity-20" />
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-500/10 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-amber-500/10 rounded-full blur-[150px]" />
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Comment ça marche ?
+          {/* Header */}
+          <div className="text-center mb-20 relative z-10">
+            <div className="inline-flex items-center gap-3 bg-[#111118]/60 backdrop-blur border border-[#2a2a3a] rounded-full px-5 py-2 mb-6">
+              <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              <span className="text-sm text-gray-400 font-medium">Processus en 3 étapes</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">
+              Comment ça <span className="gradient-text">marche</span> ?
             </h2>
-            <p className="text-gray-500 max-w-2xl mx-auto">
-              Automatisez votre business en 3 étapes simples
+            <p className="text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+              De la découverte à l'activation, automatisez votre business en quelques minutes seulement.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Choisissez un workflow",
-                description: "Parcourez notre catalogue et trouvez le workflow adapté à votre besoin.",
-                icon: "search",
-              },
-              {
-                step: "02",
-                title: "Importez dans n8n",
-                description: "Téléchargez le fichier JSON et importez-le directement dans votre instance n8n.",
-                icon: "download",
-              },
-              {
-                step: "03",
-                title: "Personnalisez & lancez",
-                description: "Adaptez le workflow à vos besoins et activez-le. C'est tout !",
-                icon: "rocket",
-              },
-            ].map((item, index) => (
-              <div key={item.step} className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-amber-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="relative bg-[#111118] rounded-2xl p-8 border border-[#2a2a3a] card-hover">
-                  <div className="text-6xl font-bold text-[#2a2a3a] absolute top-4 right-4">
-                    {item.step}
+          {/* Steps Timeline */}
+          <div className="relative z-10">
+            {/* Center connecting line */}
+            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2">
+              <div className="absolute top-0 bottom-0 left-1/2 w-0.5 -translate-x-1/2 bg-gradient-to-b from-indigo-500 via-amber-500 to-emerald-500" />
+              <div className="absolute top-20 left-1/2 w-3 h-3 -translate-x-1/2 rounded-full bg-indigo-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(99,102,241,0.3)] animate-pulse" />
+              <div className="absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(245,158,11,0.3)]" />
+              <div className="absolute bottom-20 left-1/2 w-3 h-3 -translate-x-1/2 rounded-full bg-emerald-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(16,185,129,0.3)]" />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {[
+                {
+                  step: "01",
+                  number: 1,
+                  title: "Choisissez votre workflow",
+                  description: "Explorez notre catalogue de 200+ workflows testés. Filtrez par catégorie, prix ou popularité pour trouver la perle rare.",
+                  icon: "search",
+                  color: "from-indigo-500 to-indigo-400",
+                  colorLight: "from-indigo-500/20 to-indigo-400/20",
+                  colorBorder: "border-indigo-500/30",
+                  hoverColor: "hover:border-indigo-500/50",
+                  features: ["Catalogue 200+ workflows", "Filtres intelligents", "Aperçu détaillé", "Avis clients"],
+                  illustration: "search",
+                },
+                {
+                  step: "02",
+                  number: 2,
+                  title: "Importez en 1 clic",
+                  description: "Téléchargez le fichier JSON et importez-le directement dans votre instance n8n (Cloud ou Self-hosted).",
+                  icon: "download",
+                  color: "from-amber-500 to-orange-400",
+                  colorLight: "from-amber-500/20 to-orange-400/20",
+                  colorBorder: "border-amber-500/30",
+                  hoverColor: "hover:border-amber-500/50",
+                  features: ["Compatible n8n Cloud & Self-hosted", "Import natif JSON", "Configuration auto-détectée", "Documentation incluse"],
+                  illustration: "download",
+                },
+                {
+                  step: "03",
+                  number: 3,
+                  title: "Activez & profitez",
+                  description: "Configurez vos credentials, activez le workflow et laissez l'automatisation travailler pour vous 24/7.",
+                  icon: "rocket",
+                  color: "from-emerald-500 to-teal-400",
+                  colorLight: "from-emerald-500/20 to-teal-400/20",
+                  colorBorder: "border-emerald-500/30",
+                  hoverColor: "hover:border-emerald-500/50",
+                  features: ["Configuration guidée", "Test en mode sécurisé", "Monitoring temps réel", "Support 7j/7"],
+                  illustration: "rocket",
+                },
+              ].map((item, index) => (
+                <div
+                  key={item.step}
+                  className={`relative group ${index % 2 === 0 ? 'md:pr-12' : 'md:pl-12'}`}
+                  style={{ animationDelay: `${index * 200}ms` }}
+                >
+                  {/* Step Card */}
+                  <div className={`relative bg-[#111118] rounded-3xl p-8 md:p-10 border ${item.colorBorder} transition-all duration-500 ${item.hoverColor} card-hover group relative overflow-hidden`}>
+                    {/* Background glow on hover */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${item.colorLight} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl`} />
+                    
+                    {/* Step number badge */}
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 md:absolute md:-top-4 md:left-auto md:translate-x-0 md:right-6">
+                      <div className={`relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl font-bold text-white ${item.color} shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 group-hover:scale-110`}>
+                        {item.number}
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br opacity-20 animate-pulse" />
+                      </div>
+                    </div>
+
+                    {/* Icon */}
+                    <div className={`relative w-16 h-16 mx-auto md:mx-0 mb-6 rounded-2xl flex items-center justify-center ${item.colorLight} transition-all duration-500 group-hover:scale-110`}>
+                      <div className={`absolute inset-0 ${item.color} opacity-10 animate-pulse rounded-2xl`} />
+                      <Icon name={item.illustration} className={`relative w-8 h-8 transition-colors duration-300 ${item.color.replace('from-', 'text-').replace(' to-', '')}`} />
+                    </div>
+
+                    {/* Content */}
+                    <div className="text-center md:text-left">
+                      <h3 className="text-2xl font-bold text-white mb-4 relative z-10">{item.title}</h3>
+                      <p className="text-gray-400 leading-relaxed mb-6 relative z-10">{item.description}</p>
+                      
+                      {/* Features list */}
+                      <ul className="space-y-3 relative z-10">
+                        {item.features.map((feature, fi) => (
+                          <li key={fi} className="flex items-center gap-3 text-sm text-gray-500 group-hover:text-gray-300 transition-colors duration-300" style={{ animationDelay: `${(index * 4 + fi) * 100}ms` }}>
+                            <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 ${item.color}`}>
+                              <Icon name="check" className="w-3 h-3 text-white" />
+                            </div>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Arrow indicator between steps */}
+                    {index < 2 && (
+                      <div className="hidden md:block absolute top-1/2 right-0 w-8 h-8 -translate-y-1/2 -translate-x-4 transform group-hover:translate-x-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Icon name="arrowRight" className="w-6 h-6 text-[#2a2a3a]" />
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500/20 to-amber-500/20 flex items-center justify-center mb-4">
-                    <Icon name={item.icon} className="w-6 h-6 text-indigo-400" />
+
+                  {/* Mobile connector */}
+                  <div className="md:hidden flex justify-center mt-6">
+                    <div className="w-0.5 h-12 bg-gradient-to-b from-indigo-500 via-amber-500 to-emerald-500" />
                   </div>
-                  <h3 className="text-xl font-semibold text-white mb-3">{item.title}</h3>
-                  <p className="text-gray-500 leading-relaxed">{item.description}</p>
                 </div>
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                    <Icon name="arrowRight" className="w-8 h-8 text-[#2a2a3a]" />
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom CTA within section */}
+          <div className="mt-20 text-center relative z-10">
+            <div className="inline-flex items-center gap-3 bg-[#111118]/60 backdrop-blur border border-[#2a2a3a] rounded-full px-6 py-3">
+              <Icon name="bolt" className="w-5 h-5 text-amber-400" />
+              <span className="text-white font-medium">Prêt à commencer ?</span>
+              <Link
+                href="/workflows"
+                className="btn-shine px-6 py-2 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-full font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+              >
+                Explorer les workflows
+              </Link>
+            </div>
           </div>
         </div>
+
+        {/* Floating decorative elements */}
+        <div className="absolute top-20 right-10 w-24 h-24 bg-indigo-500/10 rounded-full blur-[80px] animate-float" />
+        <div className="absolute bottom-20 left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-[80px] animate-float" />
+        <div className="absolute top-1/2 left-5 w-16 h-16 bg-emerald-500/10 rounded-full blur-[60px] animate-pulse" />
       </section>
 
       {/* CTA */}
