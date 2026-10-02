@@ -346,27 +346,117 @@ export default function Home() {
         <div className="absolute top-1/2 left-5 w-16 h-16 bg-emerald-500/10 rounded-full blur-[60px] animate-pulse" />
       </section>
 
-      {/* CTA */}
-      <section className="py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative bg-gradient-to-r from-indigo-500/10 via-[#111118] to-amber-500/10 rounded-3xl p-12 md:p-16 text-center overflow-hidden border border-[#2a2a3a]">
-            <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-[100px]" />
-            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500/20 rounded-full blur-[100px]" />
+      {/* CTA - Modern Impactful Design */}
+      <section className="py-24 relative overflow-hidden">
+        {/* Background atmosphere */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-amber-500/5" />
+        <div className="absolute inset-0 bg-grid opacity-30" />
+        <div className="absolute top-1/4 -left-32 w-96 h-96 bg-indigo-500/15 rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-amber-500/15 rounded-full blur-[150px]" />
+        <div className="absolute top-10 right-20 w-20 h-20 bg-indigo-500/10 rounded-full blur-[80px] animate-float" />
+        <div className="absolute bottom-10 left-20 w-24 h-24 bg-amber-500/10 rounded-full blur-[80px] animate-float delay-1000" />
 
-            <div className="relative">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
-                Prêt à automatiser votre business ?
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative bg-gradient-to-br from-indigo-500/10 via-[#111118] to-amber-500/10 rounded-4xl p-12 md:p-16 lg:p-20 text-center overflow-hidden border border-indigo-500/20">
+            {/* Animated border rings */}
+            <div className="absolute inset-0 rounded-4xl border-2 border-transparent bg-gradient-to-r from-indigo-500/50 to-amber-500/50 -z-10" />
+            <div className="absolute inset-2 rounded-3xl border border-indigo-500/10 -z-10" />
+            
+            {/* Floating orbs */}
+            <div className="absolute top-1/4 left-10 w-16 h-16 bg-indigo-500/15 rounded-full blur-[60px] animate-float" />
+            <div className="absolute bottom-1/4 right-10 w-20 h-20 bg-amber-500/15 rounded-full blur-[60px] animate-float delay-500" />
+            
+            <div className="relative z-10 max-w-4xl mx-auto">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-3 bg-[#111118]/80 backdrop-blur border border-indigo-500/30 rounded-full px-6 py-3 mb-8">
+                <div className="w-2.5 h-2.5 bg-emerald-400 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-gray-300">+500 entreprises nous font confiance</span>
+              </div>
+
+              {/* Main headline */}
+              <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-[1.1] tracking-tight">
+                Prêt à <span className="gradient-text">automatiser</span> votre business ?
               </h2>
-              <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
+
+              {/* Subtext with stats */}
+              <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 mb-12 text-center md:text-left max-w-3xl mx-auto">
+                <div className="flex items-center gap-3 text-gray-400">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/20 flex items-center justify-center">
+                    <Icon name="users" className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xl font-semibold text-white">500+</p>
+                    <p className="text-sm text-gray-500">Entreprises</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 text-gray-400">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                    <Icon name="bolt" className="w-5 h-5 text-amber-400" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xl font-semibold text-white">10h+</p>
+                    <p className="text-sm text-gray-500">Économisées/semaine</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 text-gray-400">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                    <Icon name="star" className="w-5 h-5 text-emerald-400" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xl font-semibold text-white">4.9/5</p>
+                    <p className="text-sm text-gray-500">Satisfaction</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main description */}
+              <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Rejoignez des centaines d&apos;entreprises qui utilisent nos workflows pour gagner du temps.
               </p>
-              <Link
-                href="/workflows"
-                className="btn-shine inline-block bg-gradient-to-r from-indigo-500 to-amber-500 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
-              >
-                Commencer maintenant
-              </Link>
+
+              {/* Dual CTA buttons */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <Link
+                  href="/workflows"
+                  className="btn-shine relative px-10 py-5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-2xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/30 hover:scale-105 transition-all duration-300 group"
+                >
+                  Commencer maintenant
+                  <Icon name="arrowRight" className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  href="/workflows"
+                  className="px-10 py-5 bg-[#111118]/80 backdrop-blur border border-indigo-500/30 text-white rounded-2xl font-semibold text-lg hover:bg-indigo-500/10 hover:border-indigo-500/50 transition-all duration-300"
+                >
+                  Voir les workflows
+                </Link>
+              </div>
+
+              {/* Trust indicators */}
+              <div className="mt-16 flex flex-wrap items-center justify-center gap-6 text-gray-600 text-sm">
+                <div className="flex items-center gap-2">
+                  <Icon name="shield" className="w-4 h-4 text-emerald-400" />
+                  <span>Paiement 100% sécurisé</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Icon name="rotateCcw" className="w-4 h-4 text-amber-400" />
+                  <span>Garantie 30 jours</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Icon name="headphones" className="w-4 h-4 text-indigo-400" />
+                  <span>Support 7j/7</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Icon name="download" className="w-4 h-4 text-amber-400" />
+                  <span>Accès immédiat</span>
+                </div>
+              </div>
             </div>
+
+            {/* Decorative corner accents */}
+            <div className="absolute top-0 left-0 w-24 h-24 border-t-2 border-l-2 border-indigo-500/30 rounded-t-4xl" />
+            <div className="absolute top-0 right-0 w-24 h-24 border-t-2 border-r-2 border-amber-500/30 rounded-t-4xl" />
+            <div className="absolute bottom-0 left-0 w-24 h-24 border-b-2 border-l-2 border-emerald-500/30 rounded-b-4xl" />
+            <div className="absolute bottom-0 right-0 w-24 h-24 border-b-2 border-r-2 border-indigo-500/30 rounded-b-4xl" />
           </div>
         </div>
       </section>
