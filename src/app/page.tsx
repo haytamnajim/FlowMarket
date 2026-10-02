@@ -359,7 +359,7 @@ export default function Home() {
                 playsInline
                 className="w-full h-full object-cover opacity-30"
               >
-                <source src="/videos/Workflow_automation_interface_an._20261002101934.mp4" type="video/mp4" />
+                <source src="/videos/cta-interface.mp4" type="video/mp4" />
               </video>
             </div>
 
