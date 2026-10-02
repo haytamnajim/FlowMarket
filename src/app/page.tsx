@@ -3,7 +3,6 @@ import { getFeaturedWorkflows, categories, getWorkflowsByCategory } from "@/data
 import WorkflowCard from "@/components/WorkflowCard";
 import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
-import TypewriterText from "@/components/TypewriterText";
 import InteractiveParticles from "@/components/InteractiveParticles";
 
 export default function Home() {
@@ -27,12 +26,7 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] tracking-tight">
               Automatisez votre{" "}
               <span className="relative">
-                <TypewriterText
-                  texts={["business", "workflow", "productivité", "entreprise"]}
-                  speed={60}
-                  pauseDuration={2500}
-                  className="gradient-text"
-                />
+                <span className="gradient-text">business</span>
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
                   <path d="M2 10C50 2 150 2 198 10" stroke="url(#gradient)" strokeWidth="3" strokeLinecap="round" />
                   <defs>

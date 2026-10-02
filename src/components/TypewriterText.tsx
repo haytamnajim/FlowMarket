@@ -39,15 +39,19 @@ export default function TypewriterText({
         }, pauseDuration);
       }
     } else {
-      // Deleting
-      if (currentText.length > 0) {
+      // Deleting - but keep at least 1 char to prevent layout shift
+      if (currentText.length > 1) {
         timeoutRef.current = setTimeout(() => {
           setCurrentText(currentFullText.slice(0, currentText.length - 1));
         }, speed / 2);
       } else {
-        // Move to next text
+        // Switch to next text directly (keep 1 char, then replace)
         setIsDeleting(false);
         setTextIndex((prev) => (prev + 1) % texts.length);
+        // Immediately start typing next text
+        timeoutRef.current = setTimeout(() => {
+          setCurrentText(texts[(textIndex + 1) % texts.length].slice(0, 1));
+        }, 50);
       }
     }
 
@@ -57,8 +61,8 @@ export default function TypewriterText({
   }, [currentText, textIndex, isDeleting, texts, speed, pauseDuration, isVisible]);
 
   return (
-    <span className={className}>
-      {currentText}
+    <span className={className} style={{ display: "inline-block", minWidth: "1ch" }}>
+      {currentText || "\u00A0"}
       <span className="relative inline-block w-2 h-8 ml-1 animate-blink align-bottom bg-gradient-to-b from-indigo-400 to-amber-400" />
     </span>
   );
