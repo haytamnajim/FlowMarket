@@ -215,17 +215,19 @@ export default function Home() {
             </p>
           </div>
 
-          {/* Steps Timeline */}
+          {/* Steps Timeline - Flexbox layout for equal height */}
           <div className="relative z-10">
-            {/* Center connecting line */}
-            <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 -translate-x-1/2">
+            {/* Center connecting line - positioned at center of step numbers */}
+            <div className="hidden md:block absolute left-1/2 top-[80px] bottom-[80px] w-0.5 -translate-x-1/2">
               <div className="absolute top-0 bottom-0 left-1/2 w-0.5 -translate-x-1/2 bg-gradient-to-b from-indigo-500 via-amber-500 to-emerald-500" />
-              <div className="absolute top-20 left-1/2 w-3 h-3 -translate-x-1/2 rounded-full bg-indigo-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(99,102,241,0.3)] animate-pulse" />
-              <div className="absolute top-1/2 left-1/2 w-3 h-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(245,158,11,0.3)]" />
-              <div className="absolute bottom-20 left-1/2 w-3 h-3 -translate-x-1/2 rounded-full bg-emerald-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(16,185,129,0.3)]" />
+              {/* Step number markers on the line */}
+              <div className="absolute top-0 left-1/2 w-4 h-4 -translate-x-1/2 rounded-full bg-indigo-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(99,102,241,0.3)] animate-pulse" />
+              <div className="absolute top-1/2 left-1/2 w-4 h-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(245,158,11,0.3)]" />
+              <div className="absolute bottom-0 left-1/2 w-4 h-4 -translate-x-1/2 rounded-full bg-emerald-500 border-4 border-[#0a0a0f] shadow-[0_0_0_4px_rgba(16,185,129,0.3)]" />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {/* Flex container for equal height cards */}
+            <div className="flex flex-col md:flex-row items-stretch gap-6 md:gap-8 relative z-10">
               {[
                 {
                   step: "01",
@@ -269,32 +271,34 @@ export default function Home() {
               ].map((item, index) => (
                 <div
                   key={item.step}
-                  className={`relative group ${index % 2 === 0 ? 'md:pr-12' : 'md:pl-12'}`}
+                  className="relative group flex-1 flex flex-col"
                   style={{ animationDelay: `${index * 200}ms` }}
                 >
-                  {/* Step Card */}
-                  <div className={`relative bg-[#111118] rounded-3xl p-8 md:p-10 border ${item.colorBorder} transition-all duration-500 ${item.hoverColor} card-hover group relative overflow-hidden`}>
+                  {/* Step Card - equal height with flex flex-col */}
+                  <div className={`relative flex flex-col h-full bg-[#111118] rounded-3xl p-8 md:p-10 border ${item.colorBorder} transition-all duration-500 ${item.hoverColor} card-hover group relative overflow-hidden`}>
                     {/* Background glow on hover */}
                     <div className={`absolute inset-0 bg-gradient-to-br ${item.colorLight} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl`} />
                     
-                    {/* Step number badge */}
-                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 md:absolute md:-top-4 md:left-auto md:translate-x-0 md:right-6">
-                      <div className={`relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl font-bold text-white ${item.color} shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 group-hover:scale-110`}>
+                    {/* Step number badge - centered on the vertical line */}
+                    <div className="relative flex justify-center mb-6">
+                      <div className={`relative w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center text-2xl md:text-3xl font-bold text-white ${item.color} shadow-[0_0_30px_rgba(99,102,241,0.4)] transition-all duration-300 group-hover:scale-110 z-10`}>
                         {item.number}
                         <div className="absolute inset-0 rounded-2xl bg-gradient-to-br opacity-20 animate-pulse" />
                       </div>
+                      {/* Connector line from badge to card top - desktop only */}
+                      <div className="hidden md:block absolute top-full left-1/2 -translate-x-1/2 w-0.5 h-4 bg-gradient-to-b from-indigo-500 via-amber-500 to-emerald-500" />
                     </div>
 
                     {/* Icon */}
-                    <div className={`relative w-16 h-16 mx-auto md:mx-0 mb-6 rounded-2xl flex items-center justify-center ${item.colorLight} transition-all duration-500 group-hover:scale-110`}>
+                    <div className={`relative w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center ${item.colorLight} transition-all duration-500 group-hover:scale-110`}>
                       <div className={`absolute inset-0 ${item.color} opacity-10 animate-pulse rounded-2xl`} />
                       <Icon name={item.illustration} className={`relative w-8 h-8 transition-colors duration-300 ${item.color.replace('from-', 'text-').replace(' to-', '')}`} />
                     </div>
 
-                    {/* Content */}
-                    <div className="text-center md:text-left">
+                    {/* Content - flex grow to fill space */}
+                    <div className="text-center flex-1 flex flex-col">
                       <h3 className="text-2xl font-bold text-white mb-4 relative z-10">{item.title}</h3>
-                      <p className="text-gray-400 leading-relaxed mb-6 relative z-10">{item.description}</p>
+                      <p className="text-gray-400 leading-relaxed mb-6 relative z-10 flex-1">{item.description}</p>
                       
                       {/* Features list */}
                       <ul className="space-y-3 relative z-10">
@@ -308,22 +312,15 @@ export default function Home() {
                         ))}
                       </ul>
                     </div>
-
-                    {/* Arrow indicator between steps */}
-                    {index < 2 && (
-                      <div className="hidden md:block absolute top-1/2 right-0 w-8 h-8 -translate-y-1/2 -translate-x-4 transform group-hover:translate-x-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Icon name="arrowRight" className="w-6 h-6 text-[#2a2a3a]" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Mobile connector */}
-                  <div className="md:hidden flex justify-center mt-6">
-                    <div className="w-0.5 h-12 bg-gradient-to-b from-indigo-500 via-amber-500 to-emerald-500" />
                   </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Mobile connectors */}
+            <div className="md:hidden flex flex-col items-center gap-6 mt-8">
+              {[0, 1].map((i) => (
+                <div key={i} className="w-0.5 h-16 bg-gradient-to-b from-indigo-500 via-amber-500 to-emerald-500" />
               ))}
             </div>
           </div>
