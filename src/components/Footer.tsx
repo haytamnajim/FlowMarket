@@ -52,7 +52,6 @@ export default function Footer() {
     { name: "twitter", label: "X (Twitter)", href: "https://twitter.com/flowmarket" },
     { name: "github", label: "GitHub", href: "https://github.com/flowmarket" },
     { name: "linkedin", label: "LinkedIn", href: "https://linkedin.com/company/flowmarket" },
-    { name: "discord", label: "Discord", href: "https://discord.gg/flowmarket" },
     { name: "youtube", label: "YouTube", href: "https://youtube.com/@flowmarket" },
   ];
 
@@ -86,13 +85,7 @@ export default function Footer() {
 
             {/* Social links */}
             <div className="flex gap-3 mb-8">
-              {[
-                { name: "twitter", label: "X (Twitter)", href: "https://twitter.com/flowmarket" },
-                { name: "github", label: "GitHub", href: "https://github.com/flowmarket" },
-                { name: "linkedin", label: "LinkedIn", href: "https://linkedin.com/company/flowmarket" },
-                { name: "discord", label: "Discord", href: "https://discord.gg/flowmarket" },
-                { name: "youtube", label: "YouTube", href: "https://youtube.com/@flowmarket" },
-              ].map((social) => (
+              {socialLinks.map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
