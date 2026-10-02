@@ -63,10 +63,10 @@ export default function Footer() {
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-br from-indigo-500/10 to-amber-500/10 rounded-full blur-[200px]" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        {/* Main grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 lg:gap-12 mb-16">
-          {/* Brand column - spans 2 cols on lg */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-2 relative">
+        {/* Main grid - 4 equal columns for navigation */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-16">
+          {/* Brand column */}
+          <div className="lg:col-span-1 relative">
             <Link href="/" className="flex items-center gap-3 mb-6" aria-label="FlowMarket Home">
               <div className="relative w-12 h-12">
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-amber-500 rounded-xl rotate-6" />
@@ -86,7 +86,13 @@ export default function Footer() {
 
             {/* Social links */}
             <div className="flex gap-3 mb-8">
-              {socialLinks.map((social) => (
+              {[
+                { name: "twitter", label: "X (Twitter)", href: "https://twitter.com/flowmarket" },
+                { name: "github", label: "GitHub", href: "https://github.com/flowmarket" },
+                { name: "linkedin", label: "LinkedIn", href: "https://linkedin.com/company/flowmarket" },
+                { name: "discord", label: "Discord", href: "https://discord.gg/flowmarket" },
+                { name: "youtube", label: "YouTube", href: "https://youtube.com/@flowmarket" },
+              ].map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
@@ -119,7 +125,13 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-5 tracking-wide uppercase text-sm">Produit</h4>
             <ul className="space-y-3">
-              {footerSections.product.map((link) => (
+              {[
+                { label: "Workflows", href: "/workflows" },
+                { label: "Catégories", href: "/categories" },
+                { label: "Tarifs", href: "/pricing" },
+                { label: "Nouveautés", href: "/workflows?sort=new" },
+                { label: "Populaires", href: "/workflows?sort=popular" },
+              ].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -137,7 +149,13 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-5 tracking-wide uppercase text-sm">Ressources</h4>
             <ul className="space-y-3">
-              {footerSections.resources.map((link) => (
+              {[
+                { label: "Documentation", href: "/docs" },
+                { label: "Guide n8n", href: "/guide" },
+                { label: "Blog", href: "/blog" },
+                { label: "API Reference", href: "/api-docs" },
+                { label: "Communauté", href: "/community" },
+              ].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -155,7 +173,13 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-5 tracking-wide uppercase text-sm">Entreprise</h4>
             <ul className="space-y-3">
-              {footerSections.company.map((link) => (
+              {[
+                { label: "À propos", href: "/about" },
+                { label: "Devenir vendeur", href: "/seller" },
+                { label: "Carrières", href: "/careers" },
+                { label: "Presse", href: "/press" },
+                { label: "Contact", href: "/contact" },
+              ].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
@@ -168,71 +192,85 @@ export default function Footer() {
               ))}
             </ul>
           </div>
+        </div>
 
-          {/* Legal + Newsletter */}
-          <div className="col-span-1 md:col-span-2 lg:col-span-2">
-            <h4 className="text-white font-semibold mb-5 tracking-wide uppercase text-sm">Légal & Newsletter</h4>
-            <ul className="space-y-3 mb-8">
-              {footerSections.legal.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-400 hover:text-white transition-colors duration-200 text-sm group flex items-center gap-2"
+        {/* Bottom section - Legal links (left) + Newsletter (right) - BALANCED */}
+        <div className="relative">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-start">
+            {/* Legal links - Left side */}
+            <div className="lg:col-span-1">
+              <h4 className="text-white font-semibold mb-5 tracking-wide uppercase text-sm">Légal</h4>
+              <ul className="space-y-3">
+                {[
+                  { label: "CGU", href: "/terms" },
+                  { label: "Confidentialité", href: "/privacy" },
+                  { label: "Remboursements", href: "/refund" },
+                  { label: "Cookies", href: "/cookies" },
+                  { label: "Licences", href: "/licenses" },
+                ].map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="text-gray-400 hover:text-white transition-colors duration-200 text-sm group flex items-center gap-2"
+                    >
+                      {link.label}
+                      <Icon name="arrowRight" className="w-4 h-4 text-transparent group-hover:text-indigo-400 transition-colors" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Newsletter - Right side - BALANCED */}
+            <div className="lg:col-span-1">
+              <div className="bg-[#111118]/60 backdrop-blur border border-[#2a2a3a] rounded-2xl p-6 lg:p-8 h-full">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-amber-500/20 flex items-center justify-center flex-shrink-0">
+                    <Icon name="mail" className="w-5 h-5 text-indigo-400" />
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-base">Newsletter</p>
+                    <p className="text-gray-500 text-sm">Recevez les nouveaux workflows et astuces n8n</p>
+                  </div>
+                </div>
+                
+                <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 mb-4">
+                  <label htmlFor="footer-email" className="sr-only">Email</label>
+                  <input
+                    id="footer-email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="votre@email.com"
+                    className="flex-1 bg-[#0a0a0f] border border-[#2a2a3a] rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm"
+                    disabled={subscribed}
+                  />
+                  <button
+                    type="submit"
+                    disabled={subscribed || !email.includes("@")}
+                    className="btn-shine px-6 py-3 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                   >
-                    {link.label}
-                    <Icon name="arrowRight" className="w-4 h-4 text-transparent group-hover:text-indigo-400 transition-colors" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Newsletter signup */}
-            <div className="bg-[#111118]/60 backdrop-blur border border-[#2a2a3a] rounded-2xl p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-500/20 to-amber-500/20 flex items-center justify-center">
-                  <Icon name="mail" className="w-4 h-4 text-indigo-400" />
-                </div>
-                <div>
-                  <p className="text-white font-medium text-sm">Newsletter</p>
-                  <p className="text-gray-500 text-xs">Recevez les nouveaux workflows et astuces n8n</p>
-                </div>
+                    {subscribed ? (
+                      <span className="flex items-center gap-2">
+                        <Icon name="check" className="w-4 h-4" />
+                        Inscrit !
+                      </span>
+                    ) : (
+                      "S'inscrire"
+                    )}
+                  </button>
+                </form>
+                <p className="text-gray-600 text-xs text-center">
+                  Pas de spam, désinscription en 1 clic.{" "}
+                  <Link href="/privacy" className="text-indigo-400 hover:underline">Politique de confidentialité</Link>
+                </p>
               </div>
-              
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3">
-                <label htmlFor="footer-email" className="sr-only">Email</label>
-                <input
-                  id="footer-email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="votre@email.com"
-                  className="flex-1 bg-[#0a0a0f] border border-[#2a2a3a] rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm"
-                  disabled={subscribed}
-                />
-                <button
-                  type="submit"
-                  disabled={subscribed || !email.includes("@")}
-                  className="btn-shine px-6 py-3 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
-                >
-                  {subscribed ? (
-                    <span className="flex items-center gap-2">
-                      <Icon name="check" className="w-4 h-4" />
-                      Inscrit !
-                    </span>
-                  ) : (
-                    "S'inscrire"
-                  )}
-                </button>
-              </form>
-              <p className="text-gray-600 text-xs mt-3 text-center">
-                Pas de spam, désinscription en 1 clic. <Link href="/privacy" className="text-indigo-400 hover:underline">Politique de confidentialité</Link>
-              </p>
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="relative pt-10">
+        <div className="relative mt-16">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-indigo-500/10 to-transparent rounded-full blur-[100px]" />
           
           <div className="relative border-t border-[#2a2a3a] pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
