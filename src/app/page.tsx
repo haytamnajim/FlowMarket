@@ -357,14 +357,14 @@ export default function Home() {
                 muted
                 loop
                 playsInline
-                className="w-full h-full object-cover opacity-30"
+                className="w-full h-full object-cover opacity-50"
               >
                 <source src="/videos/cta-interface.mp4" type="video/mp4" />
               </video>
             </div>
 
-            {/* Overlay gradient for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/90 via-[#111118]/80 to-[#0a0a0f]/90" />
+            {/* Overlay gradient for text readability - lighter */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/60 via-[#111118]/40 to-[#0a0a0f]/60" />
 
             {/* Subtle glow accents */}
             <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-[100px]" />
