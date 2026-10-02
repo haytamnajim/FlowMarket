@@ -347,13 +347,30 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-24">
+      <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative bg-gradient-to-r from-indigo-500/10 via-[#111118] to-amber-500/10 rounded-3xl p-12 md:p-16 text-center overflow-hidden border border-[#2a2a3a]">
+          <div className="relative bg-[#0a0a0f] rounded-3xl p-12 md:p-16 text-center overflow-hidden border border-[#2a2a3a]">
+            {/* Video Background */}
+            <div className="absolute inset-0 overflow-hidden rounded-3xl">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover opacity-30"
+              >
+                <source src="/videos/Workflow_automation_interface_an._20261002101934.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Overlay gradient for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/90 via-[#111118]/80 to-[#0a0a0f]/90" />
+
+            {/* Subtle glow accents */}
             <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-[100px]" />
             <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500/20 rounded-full blur-[100px]" />
 
-            <div className="relative">
+            <div className="relative z-10">
               <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
                 Prêt à automatiser votre business ?
               </h2>
