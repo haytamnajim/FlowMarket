@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { getFeaturedWorkflows, categories, getWorkflowsByCategory } from "@/data/workflows";
 import WorkflowCard from "@/components/WorkflowCard";
+import WorkflowCard3D from "@/components/WorkflowCard3D";
 import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
+import TypewriterText from "@/components/TypewriterText";
+import InteractiveParticles from "@/components/InteractiveParticles";
 
 export default function Home() {
   const featuredWorkflows = getFeaturedWorkflows();
@@ -12,6 +15,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-[100vh] overflow-hidden">
         <HeroBackground />
+        <InteractiveParticles count={60} />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 z-10">
           <div className="text-center max-w-5xl mx-auto">
@@ -24,7 +28,12 @@ export default function Home() {
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] tracking-tight">
               Automatisez votre{" "}
               <span className="relative">
-                <span className="gradient-text">business</span>
+                <TypewriterText
+                  texts={["business", "workflow", "productivité", "entreprise"]}
+                  speed={60}
+                  pauseDuration={2500}
+                  className="gradient-text"
+                />
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
                   <path d="M2 10C50 2 150 2 198 10" stroke="url(#gradient)" strokeWidth="3" strokeLinecap="round" />
                   <defs>
@@ -176,7 +185,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredWorkflows.slice(0, 6).map((workflow) => (
-              <WorkflowCard key={workflow.id} workflow={workflow} />
+              <WorkflowCard3D key={workflow.id} workflow={workflow} />
             ))}
           </div>
 
