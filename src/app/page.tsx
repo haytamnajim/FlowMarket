@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getFeaturedWorkflows, categories, getWorkflowsByCategory } from "@/data/workflows";
 import WorkflowCard from "@/components/WorkflowCard";
-import WorkflowCard3D from "@/components/WorkflowCard3D";
 import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
 import TypewriterText from "@/components/TypewriterText";
@@ -183,9 +182,9 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredWorkflows.slice(0, 6).map((workflow) => (
-              <WorkflowCard3D key={workflow.id} workflow={workflow} />
+              <WorkflowCard key={workflow.id} workflow={workflow} />
             ))}
           </div>
 
