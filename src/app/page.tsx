@@ -373,21 +373,18 @@ export default function Home() {
             <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500/20 rounded-full blur-[100px]" />
 
             <div className="relative z-10">
-              {/* Text container with semi-transparent background for readability */}
-              <div className="bg-[#0a0a0f]/80 backdrop-blur-sm rounded-2xl p-8 md:p-12 max-w-3xl mx-auto">
-                <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
-                  Prêt à automatiser votre business ?
-                </h2>
-                <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                  Rejoignez des centaines d&apos;entreprises qui utilisent nos workflows pour gagner du temps.
-                </p>
-                <Link
-                  href="/workflows"
-                  className="btn-shine inline-block bg-gradient-to-r from-indigo-500 to-amber-500 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
-                >
-                  Commencer maintenant
-                </Link>
-              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+                Prêt à automatiser votre business ?
+              </h2>
+              <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
+                Rejoignez des centaines d&apos;entreprises qui utilisent nos workflows pour gagner du temps.
+              </p>
+              <Link
+                href="/workflows"
+                className="btn-shine inline-block bg-gradient-to-r from-indigo-500 to-amber-500 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
+              >
+                Commencer maintenant
+              </Link>
             </div>
           </div>
         </div>
