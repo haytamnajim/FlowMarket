@@ -8,8 +8,8 @@ import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
 import InteractiveParticles from "@/components/InteractiveParticles";
 import QuickViewModal from "@/components/QuickViewModal";
-import Marquee from "@/components/Marquee";
 import FadeIn from "@/components/FadeIn";
+import HeroAppMorpher from "@/components/HeroAppMorpher";
 
 export default function Home() {
   const featuredWorkflows = getFeaturedWorkflows();
@@ -56,7 +56,7 @@ export default function Home() {
                   </svg>
                 </span>
                 <br />
-                en quelques clics
+                en quelques clics<HeroAppMorpher />
               </h1>
 
               <p className="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
@@ -116,10 +116,7 @@ export default function Home() {
         </div>
       </section>
 
-        {/* Marquee ticker */}
-        <Marquee />
-
-        {/* Categories */}
+      {/* Categories */}
         <FadeIn direction="up">
         <section className="py-24 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent" />
