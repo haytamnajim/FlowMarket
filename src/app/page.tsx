@@ -501,16 +501,25 @@ export default function Home() {
       <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative bg-[#0a0a0f] rounded-3xl p-12 md:p-16 text-center overflow-hidden border border-[#2a2a3a]">
-            {/* Animated CSS background — replaces missing video */}
-            <div className="absolute inset-0 rounded-3xl overflow-hidden">
-              <div className="absolute inset-0 bg-grid opacity-30" />
-              <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[150px] animate-float" />
-              <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-[150px] animate-float" style={{ animationDelay: "1.5s" }} />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" />
+            {/* Video Background */}
+            <div className="absolute inset-0 overflow-hidden rounded-3xl">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover opacity-50"
+              >
+                <source src="/videos/cta-canvas.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/70 via-transparent to-[#0a0a0f]/70 rounded-3xl" />
+
+            {/* Subtle glow accents */}
+            <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-[100px]" />
+            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500/20 rounded-full blur-[100px]" />
 
             <div className="relative z-10">
               <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur border border-white/10 rounded-full px-4 py-2 mb-6">

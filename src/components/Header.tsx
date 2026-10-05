@@ -27,9 +27,7 @@ export default function Header() {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? "py-2"
-          : "py-0"
+        isScrolled ? "py-2" : "py-0"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,11 +74,23 @@ export default function Header() {
             })}
           </nav>
 
-          {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* CTA — Connexion + S'inscrire + Explorer */}
+          <div className="hidden md:flex items-center gap-2">
+            <Link
+              href="/login"
+              className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-all duration-200"
+            >
+              Connexion
+            </Link>
+            <Link
+              href="/register"
+              className="px-4 py-2 text-sm font-medium text-white bg-[#111118] border border-[#2a2a3a] rounded-full hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all duration-200"
+            >
+              S&apos;inscrire
+            </Link>
             <Link
               href="/workflows"
-              className="btn-shine relative px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-full font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-105 transition-all duration-300"
+              className="btn-shine relative px-5 py-2 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-full font-medium text-sm hover:shadow-lg hover:shadow-indigo-500/25 hover:scale-105 transition-all duration-300"
             >
               Explorer
             </Link>
@@ -115,7 +125,7 @@ export default function Header() {
         {/* Mobile menu */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ${
-            isMenuOpen ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
+            isMenuOpen ? "max-h-[28rem] opacity-100 mt-2" : "max-h-0 opacity-0"
           }`}
         >
           <nav className="py-4 space-y-1 glass rounded-2xl p-2">
@@ -136,13 +146,29 @@ export default function Header() {
                 </Link>
               );
             })}
-            <Link
-              href="/workflows"
-              onClick={() => setIsMenuOpen(false)}
-              className="block mt-2 px-4 py-3 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-center"
-            >
-              Explorer
-            </Link>
+            <div className="pt-2 pb-1 px-2 flex flex-col gap-2 border-t border-[#2a2a3a] mt-2">
+              <Link
+                href="/login"
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-4 py-2.5 text-gray-400 hover:text-white text-sm font-medium rounded-xl hover:bg-white/5 transition-all text-center"
+              >
+                Connexion
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setIsMenuOpen(false)}
+                className="block px-4 py-2.5 text-white border border-[#2a2a3a] text-sm font-medium rounded-xl hover:border-indigo-500/50 transition-all text-center"
+              >
+                S&apos;inscrire
+              </Link>
+              <Link
+                href="/workflows"
+                onClick={() => setIsMenuOpen(false)}
+                className="block mt-1 px-4 py-3 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-center"
+              >
+                Explorer les workflows
+              </Link>
+            </div>
           </nav>
         </div>
       </div>
