@@ -156,6 +156,49 @@ export default function QuickViewModal({ workflow, isOpen, onClose }: QuickViewM
               ))}
             </div>
 
+            {/* Demo Video Front-End Player & Protected Backend Banner */}
+            <div className="mb-8 space-y-4">
+              {/* Video Player */}
+              <div className="rounded-2xl border border-[#2a2a3a] overflow-hidden bg-[#07070c]">
+                <div className="flex items-center justify-between px-4 py-3 bg-[#0d0d14] border-b border-[#2a2a3a]">
+                  <span className="text-xs font-semibold text-emerald-400 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <Icon name="video" className="w-3.5 h-3.5" />
+                    <span>Démo Vidéo Front-End (Résultat en action)</span>
+                  </span>
+                  <span className="text-[11px] text-gray-500 font-mono">
+                    Aperçu utilisateur
+                  </span>
+                </div>
+                <div className="aspect-video relative bg-black">
+                  <video
+                    src={workflow.demoVideo || "/videos/hero-workflow.mp4"}
+                    controls
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              </div>
+
+              {/* Protected Backend Canvas Badge */}
+              <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-3.5">
+                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-amber-400 mt-0.5">
+                  <Icon name="lock" className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-semibold text-white flex items-center gap-2">
+                    Architecture & JSON backend 100% protégés
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono">
+                      Confidentiel
+                    </span>
+                  </h4>
+                  <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+                    Le schéma interne des nœuds n8n est masqué pour préserver la propriété intellectuelle. Le fichier source JSON prêt à l&apos;importation vous sera immédiatement délivré dès validation de votre commande.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Description */}
             <div className="mb-8">
               <h3 className="text-lg font-semibold text-white mb-3">Description</h3>

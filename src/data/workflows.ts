@@ -15,6 +15,10 @@ export interface Workflow {
   createdAt: string;
   nodes: number;
   complexity: "Débutant" | "Intermédiaire" | "Avancé";
+  demoVideo?: string;
+  demoPoster?: string;
+  n8nJsonProtected?: string;
+  status?: "published" | "draft";
 }
 
 export const categories = [

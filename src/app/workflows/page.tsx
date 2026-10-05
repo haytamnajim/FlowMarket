@@ -9,9 +9,9 @@ import { Workflow } from "@/data/workflows";
 
 const complexityOptions = [
   { value: "all", label: "Tous niveaux", color: "text-gray-400" },
-  { value: "Débutant", label: "🟢 Débutant", color: "text-emerald-400" },
-  { value: "Intermédiaire", label: "🟠 Intermédiaire", color: "text-amber-400" },
-  { value: "Avancé", label: "🔴 Avancé", color: "text-red-400" },
+  { value: "Débutant", label: "Débutant", color: "text-emerald-400" },
+  { value: "Intermédiaire", label: "Intermédiaire", color: "text-amber-400" },
+  { value: "Avancé", label: "Avancé", color: "text-red-400" },
 ];
 
 const sortOptions = [

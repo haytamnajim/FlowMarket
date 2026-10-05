@@ -62,25 +62,24 @@ export default async function WorkflowDetailPage({ params }: Props) {
 
             {/* Hero card */}
             <div className="bg-[#111118] rounded-3xl border border-[#2a2a3a] overflow-hidden">
-              {/* Banner */}
-              <div className="aspect-video relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/25 via-transparent to-amber-500/25" />
-                <div className="absolute inset-0 bg-grid opacity-40" />
-                {/* Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-indigo-500/20 rounded-full blur-[80px]" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-24 h-24 rounded-3xl bg-gradient-to-br from-indigo-500/40 to-amber-500/40 backdrop-blur flex items-center justify-center border border-white/10 shadow-2xl">
-                    <Icon name="bolt" className="w-12 h-12 text-white" />
-                  </div>
-                </div>
+              {/* Banner with Front-End Demo Video */}
+              <div className="aspect-video relative overflow-hidden bg-black border-b border-[#2a2a3a]">
+                <video
+                  src={workflow.demoVideo || "/videos/hero-workflow.mp4"}
+                  controls
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
                 {workflow.featured && (
-                  <span className="absolute top-4 left-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5">
+                  <span className="absolute top-4 left-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 z-10 pointer-events-none shadow-lg">
                     <Icon name="star" className="w-3 h-3" />
                     Populaire
                   </span>
                 )}
-                <span className="absolute top-4 right-4 bg-[#111118]/80 backdrop-blur text-gray-300 text-xs font-medium px-3 py-1.5 rounded-full border border-[#2a2a3a]">
-                  {workflow.nodes} nœuds
+                <span className="absolute top-4 right-4 bg-[#111118]/90 backdrop-blur text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-full border border-emerald-500/30 flex items-center gap-1.5 z-10 pointer-events-none shadow-lg">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <Icon name="video" className="w-3.5 h-3.5" />
+                  <span>Démo Front-End en direct</span>
                 </span>
               </div>
 
@@ -90,9 +89,9 @@ export default async function WorkflowDetailPage({ params }: Props) {
                   <span className="text-xs font-medium text-indigo-400 bg-indigo-500/10 px-3 py-1.5 rounded-full border border-indigo-500/20">
                     {workflow.category}
                   </span>
-                  <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${complexityColor}`}>
-                    {workflow.complexity === "Débutant" ? "🟢" : workflow.complexity === "Intermédiaire" ? "🟠" : "🔴"}{" "}
-                    {workflow.complexity}
+                  <span className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${complexityColor} flex items-center gap-1.5`}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                    <span>{workflow.complexity}</span>
                   </span>
                 </div>
 
@@ -136,6 +135,26 @@ export default async function WorkflowDetailPage({ params }: Props) {
                       </Link>
                     ))}
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Backend Security Card */}
+            <div className="bg-[#111118] rounded-3xl border border-amber-500/20 p-6 sm:p-8 bg-gradient-to-br from-amber-500/5 via-transparent to-transparent">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-amber-400">
+                  <Icon name="lock" className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    Architecture & Fichier JSON n8n Protégés
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono">
+                      Sécurisé
+                    </span>
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-2 leading-relaxed">
+                    La vidéo ci-dessus démontre le résultat réel obtenu par ce workflow. La structure complète des nœuds et le fichier source JSON sont protégés et chiffrés pour préserver notre savoir-faire. Vous recevrez le fichier JSON natif immédiatement après votre commande.
+                  </p>
                 </div>
               </div>
             </div>

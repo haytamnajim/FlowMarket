@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import Icon from "@/components/Icon";
 
 const navItems = [
   { href: "/workflows", label: "Workflows" },
@@ -74,8 +75,16 @@ export default function Header() {
             })}
           </nav>
 
-          {/* CTA — Connexion + S'inscrire + Explorer */}
+          {/* CTA — Admin + Connexion + S'inscrire + Explorer */}
           <div className="hidden md:flex items-center gap-2">
+            <Link
+              href="/admin"
+              className="px-3 py-1.5 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-all duration-200 flex items-center gap-1.5"
+              title="Panneau d'administration"
+            >
+              <Icon name="shield" className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Admin</span>
+            </Link>
             <Link
               href="/login"
               className="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-all duration-200"
@@ -160,6 +169,14 @@ export default function Header() {
                 className="block px-4 py-2.5 text-white border border-[#2a2a3a] text-sm font-medium rounded-xl hover:border-indigo-500/50 transition-all text-center"
               >
                 S&apos;inscrire
+              </Link>
+              <Link
+                href="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 text-sm font-semibold rounded-xl text-center"
+              >
+                <Icon name="shield" className="w-4 h-4" />
+                <span>Panneau Admin</span>
               </Link>
               <Link
                 href="/workflows"
