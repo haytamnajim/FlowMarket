@@ -9,7 +9,7 @@ interface WorkflowCardProps {
 
 export default function WorkflowCard({ workflow, onQuickView }: WorkflowCardProps) {
   return (
-    <div className="group">
+    <div className="group relative">
       <Link href={`/workflows/${workflow.slug}`} className="block">
         <div className="bg-[#111118] rounded-2xl border border-[#2a2a3a] overflow-hidden card-hover">
           {/* Image */}
@@ -34,11 +34,19 @@ export default function WorkflowCard({ workflow, onQuickView }: WorkflowCardProp
 
           {/* Content */}
           <div className="p-5">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
               <span className="text-xs font-medium text-indigo-400 bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20">
                 {workflow.category}
               </span>
-              <span className="text-xs text-gray-500">
+              {/* Complexity badge — colored */}
+              <span className={`text-xs font-semibold px-2.5 py-1 rounded-lg border ${
+                workflow.complexity === "Débutant"
+                  ? "text-emerald-400 bg-emerald-500/10 border-emerald-500/20"
+                  : workflow.complexity === "Intermédiaire"
+                  ? "text-amber-400 bg-amber-500/10 border-amber-500/20"
+                  : "text-red-400 bg-red-500/10 border-red-500/20"
+              }`}>
+                {workflow.complexity === "Débutant" ? "🟢" : workflow.complexity === "Intermédiaire" ? "🟠" : "🔴"}{" "}
                 {workflow.complexity}
               </span>
             </div>
@@ -47,9 +55,25 @@ export default function WorkflowCard({ workflow, onQuickView }: WorkflowCardProp
               {workflow.title}
             </h3>
 
-            <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">
+            <p className="text-gray-500 text-sm line-clamp-2 mb-3 leading-relaxed">
               {workflow.description}
             </p>
+
+            {/* Tags preview */}
+            {workflow.tags && workflow.tags.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-4">
+                {workflow.tags.slice(0, 3).map((tag) => (
+                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-[#0a0a0f]/80 border border-[#2a2a3a] text-gray-500">
+                    #{tag}
+                  </span>
+                ))}
+                {workflow.tags.length > 3 && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#0a0a0f]/80 border border-[#2a2a3a] text-gray-600">
+                    +{workflow.tags.length - 3}
+                  </span>
+                )}
+              </div>
+            )}
 
             {/* Footer */}
             <div className="flex items-center justify-between pt-4 border-t border-[#2a2a3a]">
@@ -66,7 +90,7 @@ export default function WorkflowCard({ workflow, onQuickView }: WorkflowCardProp
         </div>
       </Link>
 
-      {/* Quick View Button */}
+      {/* Quick View Button — parent has relative, button positioned at bottom of card */}
       {onQuickView && (
         <button
           onClick={(e) => {
@@ -74,7 +98,7 @@ export default function WorkflowCard({ workflow, onQuickView }: WorkflowCardProp
             e.stopPropagation();
             onQuickView(workflow);
           }}
-          className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full max-w-[calc(100%-1rem)] px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 hover:shadow-lg hover:shadow-indigo-500/25 z-10"
+          className="absolute bottom-[68px] left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 hover:shadow-lg hover:shadow-indigo-500/25 z-10"
         >
           Aperçu rapide
         </button>

@@ -70,9 +70,9 @@ export default function Home() {
               {/* Stats */}
               <div className="grid grid-cols-3 gap-6 mt-8 max-w-lg mx-auto">
                 {[
-                  { value: "200+", label: "Workflows" },
-                  { value: "500+", label: "Clients" },
-                  { value: "4.8", label: "Note moyenne" },
+                  { value: "1 200+", label: "Workflows" },
+                  { value: "10k+", label: "Automatiseurs" },
+                  { value: "4.9★", label: "Note moyenne" },
                 ].map((stat) => (
                   <div key={stat.label}>
                     <div className="text-3xl md:text-4xl font-bold gradient-text">{stat.value}</div>
@@ -200,6 +200,93 @@ export default function Home() {
               Voir tous les workflows
               <Icon name="arrowRight" className="w-4 h-4" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/3 to-transparent" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-6">
+              <Icon name="star" className="w-4 h-4 text-amber-400" />
+              <span className="text-sm text-gray-400">+10 000 automatiseurs satisfaits</span>
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Ce qu&apos;ils en <span className="gradient-text">disent</span>
+            </h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">Des entrepreneurs et développeurs qui ont transformé leur business avec nos workflows</p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                name: "Marie L.",
+                role: "Fondatrice, AgenceDigitale",
+                avatar: "M",
+                rating: 5,
+                text: "J'ai économisé 15h par semaine grâce au workflow de prospection LinkedIn. ROI en 2 jours, c'est bluffant.",
+                workflow: "LinkedIn Lead Gen",
+                color: "from-indigo-500 to-purple-500",
+              },
+              {
+                name: "Thomas R.",
+                role: "CEO, SaaS Startup",
+                avatar: "T",
+                rating: 5,
+                text: "La qualité des workflows est exceptionnelle. Documentation claire, support réactif. Je recommande à 100%.",
+                workflow: "E-commerce Automation",
+                color: "from-amber-500 to-orange-500",
+              },
+              {
+                name: "Sarah K.",
+                role: "Freelance Marketing",
+                avatar: "S",
+                rating: 5,
+                text: "En tant que débutante sur n8n, les workflows avec leur doc détaillée m'ont permis d'automatiser en 30 min.",
+                workflow: "Content Scheduler",
+                color: "from-emerald-500 to-teal-500",
+              },
+            ].map((testimonial, i) => (
+              <div
+                key={i}
+                className="relative bg-[#111118] rounded-2xl p-6 border border-[#2a2a3a] hover:border-indigo-500/30 transition-all duration-300 card-hover group"
+              >
+                {/* Quote icon */}
+                <div className="absolute top-5 right-5 text-4xl text-gray-700 font-serif leading-none">&#8220;</div>
+
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {Array.from({ length: testimonial.rating }).map((_, s) => (
+                    <Icon key={s} name="star" className="w-4 h-4 text-amber-400" />
+                  ))}
+                </div>
+
+                <p className="text-gray-300 text-sm leading-relaxed mb-6 relative z-10">
+                  &ldquo;{testimonial.text}&rdquo;
+                </p>
+
+                {/* Workflow tag */}
+                <div className="mb-5">
+                  <span className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                    <Icon name="bolt" className="w-3 h-3" />
+                    {testimonial.workflow}
+                  </span>
+                </div>
+
+                {/* Author */}
+                <div className="flex items-center gap-3 pt-4 border-t border-[#2a2a3a]">
+                  <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${testimonial.color} flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-sm">{testimonial.name}</p>
+                    <p className="text-gray-500 text-xs">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -358,43 +445,98 @@ export default function Home() {
         <div className="absolute top-1/2 left-5 w-16 h-16 bg-emerald-500/10 rounded-full blur-[60px] animate-pulse" />
       </section>
 
+      {/* FAQ */}
+      <section className="py-24 relative">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Questions <span className="gradient-text">fréquentes</span>
+            </h2>
+            <p className="text-gray-500">Tout ce que vous devez savoir avant de commencer</p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              {
+                q: "Est-ce compatible avec n8n Cloud et Self-hosted ?",
+                a: "Oui, tous nos workflows sont compatibles avec n8n Cloud et les instances Self-hosted (v1.0+). Le fichier JSON s'importe nativement depuis l'interface n8n.",
+              },
+              {
+                q: "Que se passe-t-il si un workflow ne fonctionne pas ?",
+                a: "Nous offrons une garantie satisfait ou remboursé de 30 jours. Notre support email 7j/7 vous accompagne également pour la configuration et le débogage.",
+              },
+              {
+                q: "Ai-je besoin de connaissances techniques ?",
+                a: "Non ! Chaque workflow est livré avec une documentation pas-à-pas illustrée. Les workflows 🟢 Débutant sont accessibles sans aucune expérience en développement.",
+              },
+              {
+                q: "Les mises à jour sont-elles incluses ?",
+                a: "Oui, toutes les mises à jour futures du workflow acheté sont incluses à vie, sans frais supplémentaires. Vous recevez une notification par email à chaque mise à jour.",
+              },
+              {
+                q: "Puis-je revendre ou partager les workflows ?",
+                a: "Non, la licence est personnelle et non transférable. Vous pouvez utiliser le workflow pour votre usage ou vos clients, mais pas le revendre tel quel.",
+              },
+            ].map((item, i) => (
+              <details
+                key={i}
+                className="group bg-[#111118] rounded-2xl border border-[#2a2a3a] hover:border-indigo-500/30 transition-colors duration-300 overflow-hidden"
+              >
+                <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none">
+                  <span className="text-white font-medium">{item.q}</span>
+                  <span className="w-6 h-6 rounded-full bg-[#2a2a3a] flex items-center justify-center flex-shrink-0 group-open:bg-indigo-500/20 group-open:rotate-45 transition-all duration-300">
+                    <Icon name="plus" className="w-3 h-3 text-gray-400 group-open:text-indigo-400" />
+                  </span>
+                </summary>
+                <div className="px-6 pb-5">
+                  <p className="text-gray-400 text-sm leading-relaxed border-t border-[#2a2a3a] pt-4">{item.a}</p>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative bg-[#0a0a0f] rounded-3xl p-12 md:p-16 text-center overflow-hidden border border-[#2a2a3a]">
-            {/* Video Background */}
-            <div className="absolute inset-0 overflow-hidden rounded-3xl">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full h-full object-cover opacity-50"
-              >
-                <source src="/videos/cta-canvas.mp4" type="video/mp4" />
-              </video>
+            {/* Animated CSS background — replaces missing video */}
+            <div className="absolute inset-0 rounded-3xl overflow-hidden">
+              <div className="absolute inset-0 bg-grid opacity-30" />
+              <div className="absolute top-0 left-1/4 w-96 h-96 bg-indigo-500/20 rounded-full blur-[150px] animate-float" />
+              <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-amber-500/20 rounded-full blur-[150px] animate-float" style={{ animationDelay: "1.5s" }} />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-emerald-500/10 rounded-full blur-[120px] animate-pulse" />
             </div>
 
-            {/* Overlay gradient for text readability - lighter */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/60 via-[#111118]/40 to-[#0a0a0f]/60" />
-
-            {/* Subtle glow accents */}
-            <div className="absolute top-0 left-1/4 w-64 h-64 bg-indigo-500/20 rounded-full blur-[100px]" />
-            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-amber-500/20 rounded-full blur-[100px]" />
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/70 via-transparent to-[#0a0a0f]/70 rounded-3xl" />
 
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
+              <div className="inline-flex items-center gap-2 bg-white/5 backdrop-blur border border-white/10 rounded-full px-4 py-2 mb-6">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <span className="text-sm text-gray-300">+10 000 automatiseurs nous font confiance</span>
+              </div>
+              <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
                 Prêt à automatiser votre business ?
               </h2>
-              <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_10px_rgba(0,0,0,0.3)]">
-                Rejoignez des centaines d&apos;entreprises qui utilisent nos workflows pour gagner du temps.
+              <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                Rejoignez des milliers d&apos;entreprises qui utilisent nos workflows pour gagner des heures chaque semaine.
               </p>
-              <Link
-                href="/workflows"
-                className="btn-shine inline-block bg-gradient-to-r from-indigo-500 to-amber-500 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
-              >
-                Commencer maintenant
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  href="/workflows"
+                  className="btn-shine inline-block bg-gradient-to-r from-indigo-500 to-amber-500 text-white px-10 py-5 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
+                >
+                  Explorer les workflows
+                </Link>
+                <Link
+                  href="/about"
+                  className="inline-block bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] text-white px-10 py-5 rounded-xl font-semibold text-lg hover:border-indigo-500/50 transition-all"
+                >
+                  En savoir plus
+                </Link>
+              </div>
             </div>
           </div>
         </div>
