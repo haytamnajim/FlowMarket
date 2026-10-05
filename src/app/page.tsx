@@ -1,99 +1,105 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { getFeaturedWorkflows, categories, getWorkflowsByCategory } from "@/data/workflows";
 import WorkflowCard from "@/components/WorkflowCard";
 import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
 import InteractiveParticles from "@/components/InteractiveParticles";
+import QuickViewModal from "@/components/QuickViewModal";
 
 export default function Home() {
   const featuredWorkflows = getFeaturedWorkflows();
+  const [quickViewWorkflow, setQuickViewWorkflow] = useState<typeof featuredWorkflows[0] | null>(null);
 
   return (
-    <main>
-      {/* Hero Section */}
-      <section className="relative min-h-[100vh] overflow-hidden">
-        <HeroBackground />
-        <InteractiveParticles count={60} />
+    <>
+      <main>
+        {/* Hero Section */}
+        <section className="relative min-h-[100vh] overflow-hidden">
+          <HeroBackground />
+          <InteractiveParticles count={60} />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 z-10">
-          <div className="text-center max-w-5xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-6">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-sm text-gray-400">+200 workflows disponibles</span>
-            </div>
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 z-10">
+            <div className="text-center max-w-5xl mx-auto">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-6">
+                <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <span className="text-sm text-gray-400">+200 workflows disponibles</span>
+              </div>
 
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] tracking-tight">
-              Automatisez votre{" "}
-              <span className="relative">
-                <span className="gradient-text">business</span>
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
-                  <path d="M2 10C50 2 150 2 198 10" stroke="url(#gradient)" strokeWidth="3" strokeLinecap="round" />
-                  <defs>
-                    <linearGradient id="gradient" x1="0" y1="0" x2="200" y2="0">
-                      <stop stopColor="#6366f1" />
-                      <stop offset="1" stopColor="#f59e0b" />
-                    </linearGradient>
-                  </defs>
-                </svg>
-              </span>
-              <br />
-              en quelques clics
-            </h1>
+              <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.1] tracking-tight">
+                Automatisez votre{" "}
+                <span className="relative">
+                  <span className="gradient-text">business</span>
+                  <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none">
+                    <path d="M2 10C50 2 150 2 198 10" stroke="url(#gradient)" strokeWidth="3" strokeLinecap="round" />
+                    <defs>
+                      <linearGradient id="gradient" x1="0" y1="0" x2="200" y2="0">
+                        <stop stopColor="#6366f1" />
+                        <stop offset="1" stopColor="#f59e0b" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </span>
+                <br />
+                en quelques clics
+              </h1>
 
-            <p className="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Des centaines de workflows n8n testés et optimisés. Importez, personnalisez,
-              automatisez. Gagnez des heures chaque semaine.
-            </p>
+              <p className="text-xl md:text-2xl text-gray-400 mb-8 max-w-3xl mx-auto leading-relaxed">
+                Des centaines de workflows n8n testés et optimisés. Importez, personnalisez,
+                automatisez. Gagnez des heures chaque semaine.
+              </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-              <Link
-                href="/workflows"
-                className="btn-shine relative px-8 py-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
-              >
-                Explorer les workflows
-              </Link>
-              <Link
-                href="/about"
-                className="px-8 py-4 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] text-white rounded-xl font-semibold text-lg hover:bg-[#1a1a24] hover:border-indigo-500/50 transition-all"
-              >
-                En savoir plus
-              </Link>
-            </div>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+                <Link
+                  href="/workflows"
+                  className="btn-shine relative px-8 py-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
+                >
+                  Explorer les workflows
+                </Link>
+                <Link
+                  href="/about"
+                  className="px-8 py-4 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] text-white rounded-xl font-semibold text-lg hover:bg-[#1a1a24] hover:border-indigo-500/50 transition-all"
+                >
+                  En savoir plus
+                </Link>
+              </div>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mt-8 max-w-lg mx-auto">
-              {[
-                { value: "200+", label: "Workflows" },
-                { value: "500+", label: "Clients" },
-                { value: "4.8", label: "Note moyenne" },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <div className="text-3xl md:text-4xl font-bold gradient-text">{stat.value}</div>
-                  <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-6 mt-8 max-w-lg mx-auto">
+                {[
+                  { value: "200+", label: "Workflows" },
+                  { value: "500+", label: "Clients" },
+                  { value: "4.8", label: "Note moyenne" },
+                ].map((stat) => (
+                  <div key={stat.label}>
+                    <div className="text-3xl md:text-4xl font-bold gradient-text">{stat.value}</div>
+                    <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
+                  </div>
+                ))}
+              </div>
 
-            {/* Trust Badges */}
-            <div className="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3 text-sm text-gray-500">
-              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
-                <Icon name="check" className="w-4 h-4 text-emerald-400" />
-                Garantie 30j
-              </span>
-              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
-                <Icon name="check" className="w-4 h-4 text-emerald-400" />
-                Paiement sécurisé
-              </span>
-              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
-                <Icon name="check" className="w-4 h-4 text-emerald-400" />
-                Accès immédiat
-              </span>
-              <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
-                <Icon name="check" className="w-4 h-4 text-emerald-400" />
-                Support inclus
-              </span>
-            </div>
+              {/* Trust Badges */}
+              <div className="mt-4 flex flex-wrap justify-center gap-2 sm:gap-3 text-sm text-gray-500">
+                <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                  <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                  Garantie 30j
+                </span>
+                <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                  <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                  Paiement sécurisé
+                </span>
+                <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                  <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                  Accès immédiat
+                </span>
+                <span className="flex items-center gap-1.5 bg-[#111118]/50 backdrop-blur border border-[#2a2a3a] px-4 py-2 rounded-xl">
+                  <Icon name="check" className="w-4 h-4 text-emerald-400" />
+                  Support inclus
+                </span>
+              </div>
           </div>
         </div>
       </section>
@@ -178,7 +184,11 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredWorkflows.slice(0, 6).map((workflow) => (
-              <WorkflowCard key={workflow.id} workflow={workflow} />
+              <WorkflowCard 
+                key={workflow.id} 
+                workflow={workflow} 
+                onQuickView={setQuickViewWorkflow}
+              />
             ))}
           </div>
 
@@ -390,5 +400,11 @@ export default function Home() {
         </div>
       </section>
     </main>
+    <QuickViewModal 
+      workflow={quickViewWorkflow} 
+      isOpen={!!quickViewWorkflow} 
+      onClose={() => setQuickViewWorkflow(null)} 
+    />
+  </>
   );
 }

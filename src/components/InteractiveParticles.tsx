@@ -21,7 +21,7 @@ export default function InteractiveParticles({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
-  const animationRef = useRef<number>();
+  const animationRef = useRef<number | undefined>(undefined);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
   const colors = [

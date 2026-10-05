@@ -1,3 +1,5 @@
+import type { JSX } from "react";
+
 interface IconProps {
   name: string;
   className?: string;
