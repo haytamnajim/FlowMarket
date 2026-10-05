@@ -8,6 +8,8 @@ import Icon from "@/components/Icon";
 import HeroBackground from "@/components/HeroBackground";
 import InteractiveParticles from "@/components/InteractiveParticles";
 import QuickViewModal from "@/components/QuickViewModal";
+import Marquee from "@/components/Marquee";
+import FadeIn from "@/components/FadeIn";
 
 export default function Home() {
   const featuredWorkflows = getFeaturedWorkflows();
@@ -20,6 +22,16 @@ export default function Home() {
         <section className="relative min-h-[100vh] overflow-hidden">
           <HeroBackground />
           <InteractiveParticles count={60} />
+          {/* Hero video background */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.06] pointer-events-none"
+          >
+            <source src="/videos/hero-workflow.mp4" type="video/mp4" />
+          </video>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 z-10">
             <div className="text-center max-w-5xl mx-auto">
@@ -104,8 +116,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
-      <section className="py-24 relative">
+        {/* Marquee ticker */}
+        <Marquee />
+
+        {/* Categories */}
+        <FadeIn direction="up">
+        <section className="py-24 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -160,8 +176,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </FadeIn>
 
       {/* Featured Workflows */}
+      <FadeIn direction="up">
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
@@ -203,8 +221,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </FadeIn>
 
       {/* Testimonials */}
+      <FadeIn direction="up">
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/3 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -290,8 +310,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </FadeIn>
 
       {/* How it works - Modern Design */}
+      <FadeIn direction="up">
       <section className="py-28 relative overflow-hidden">
         {/* Background atmosphere */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/3 via-amber-500/3 to-transparent" />
@@ -444,8 +466,10 @@ export default function Home() {
         <div className="absolute bottom-20 left-10 w-32 h-32 bg-amber-500/10 rounded-full blur-[80px] animate-float" />
         <div className="absolute top-1/2 left-5 w-16 h-16 bg-emerald-500/10 rounded-full blur-[60px] animate-pulse" />
       </section>
+      </FadeIn>
 
       {/* FAQ */}
+      <FadeIn direction="up">
       <section className="py-24 relative">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -496,8 +520,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </FadeIn>
 
       {/* CTA */}
+      <FadeIn direction="up">
       <section className="py-24 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative bg-[#0a0a0f] rounded-3xl p-12 md:p-16 text-center overflow-hidden border border-[#2a2a3a]">
@@ -550,6 +576,7 @@ export default function Home() {
           </div>
         </div>
       </section>
+      </FadeIn>
     </main>
     <QuickViewModal 
       workflow={quickViewWorkflow} 
