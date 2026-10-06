@@ -13,15 +13,35 @@ export interface Workflow {
   downloads: number;
   featured: boolean;
   createdAt: string;
+  updatedAt?: string;
   nodes: number;
   complexity: "Débutant" | "Intermédiaire" | "Avancé";
   demoVideo?: string;
   demoPoster?: string;
   n8nJsonProtected?: string;
   status?: "published" | "draft";
+  publishedAt?: string;
+  
+  // SEO fields
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImage?: string;
 }
 
-export const categories = [
+export interface Category {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  hoverColor: string;
+  description: string;
+  order: number;
+  isActive: boolean;
+}
+
+export const categories: Category[] = [
   { 
     id: "marketing", 
     name: "Marketing", 
@@ -30,7 +50,9 @@ export const categories = [
     bgColor: "from-pink-500/10 to-rose-500/10",
     borderColor: "border-pink-500/20",
     hoverColor: "hover:border-pink-500/50",
-    description: "Automatisez vos campagnes et générez des leads"
+    description: "Automatisez vos campagnes et générez des leads",
+    order: 1,
+    isActive: true,
   },
   { 
     id: "productivity", 
@@ -40,7 +62,9 @@ export const categories = [
     bgColor: "from-emerald-500/10 to-teal-500/10",
     borderColor: "border-emerald-500/20",
     hoverColor: "hover:border-emerald-500/50",
-    description: "Gagnez du temps au quotidien"
+    description: "Gagnez du temps au quotidien",
+    order: 2,
+    isActive: true,
   },
   { 
     id: "ecommerce", 
@@ -50,7 +74,9 @@ export const categories = [
     bgColor: "from-orange-500/10 to-amber-500/10",
     borderColor: "border-orange-500/20",
     hoverColor: "hover:border-orange-500/50",
-    description: "Boostez vos ventes en ligne"
+    description: "Boostez vos ventes en ligne",
+    order: 3,
+    isActive: true,
   },
   { 
     id: "hr", 
@@ -60,7 +86,9 @@ export const categories = [
     bgColor: "from-violet-500/10 to-purple-500/10",
     borderColor: "border-violet-500/20",
     hoverColor: "hover:border-violet-500/50",
-    description: "Simplifiez le recrutement et l'onboarding"
+    description: "Simplifiez le recrutement et l'onboarding",
+    order: 4,
+    isActive: true,
   },
   { 
     id: "finance", 
@@ -70,7 +98,9 @@ export const categories = [
     bgColor: "from-yellow-500/10 to-lime-500/10",
     borderColor: "border-yellow-500/20",
     hoverColor: "hover:border-yellow-500/50",
-    description: "Automatisez la comptabilité et facturation"
+    description: "Automatisez la comptabilité et facturation",
+    order: 5,
+    isActive: true,
   },
   { 
     id: "dev", 
@@ -80,7 +110,9 @@ export const categories = [
     bgColor: "from-blue-500/10 to-cyan-500/10",
     borderColor: "border-blue-500/20",
     hoverColor: "hover:border-blue-500/50",
-    description: "Accélérez le déploiement et le monitoring"
+    description: "Accélérez le déploiement et le monitoring",
+    order: 6,
+    isActive: true,
   },
   { 
     id: "ai", 
@@ -90,7 +122,9 @@ export const categories = [
     bgColor: "from-indigo-500/10 to-violet-500/10",
     borderColor: "border-indigo-500/20",
     hoverColor: "hover:border-indigo-500/50",
-    description: "Intégrez l'IA dans vos processus"
+    description: "Intégrez l'IA dans vos processus",
+    order: 7,
+    isActive: true,
   },
   { 
     id: "social", 
@@ -100,7 +134,9 @@ export const categories = [
     bgColor: "from-red-500/10 to-pink-500/10",
     borderColor: "border-red-500/20",
     hoverColor: "hover:border-red-500/50",
-    description: "Gérez et automatisez vos réseaux sociaux"
+    description: "Gérez et automatisez vos réseaux sociaux",
+    order: 8,
+    isActive: true,
   },
 ];
 

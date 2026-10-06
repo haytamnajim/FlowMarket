@@ -3,11 +3,22 @@
 import { useState, useEffect, useMemo, type FormEvent } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
-import { categories, Workflow } from "@/data/workflows";
-import { getAllStoredWorkflows, saveWorkflow, deleteWorkflow } from "@/data/workflowStore";
+import { categories, Workflow, Category } from "@/data/workflows";
+import { 
+  getAllStoredWorkflows, 
+  saveWorkflow, 
+  deleteWorkflow,
+  getAllStoredCategories,
+  saveCategory,
+  deleteCategory,
+  downloadCsv,
+  importWorkflowsFromCsv,
+  parseCsvFile,
+  CSV_HEADERS
+} from "@/data/workflowStore";
 import { getCurrentAdmin, logOutAdmin, AdminUser, uploadWorkflowFile, STORAGE_BUCKETS } from "@/lib/supabase";
 
-/* ─────────────────────── constants ─────────────────────── */
+/* constants */
 
 // n8n Brand Colors
 const N8N_COLORS = {
@@ -56,7 +67,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   social: "#3b82f6",
 };
 
-/* ─────────────────── sub-components ────────────────────── */
+/* sub-components */
 
 function StatCard({
   label, value, icon, trend, accent,
@@ -168,11 +179,11 @@ function FieldLabel({ children, required, hint }: { children: React.ReactNode; r
 
 const inputBase = "w-full bg-[#080812] border border-[#1e1e2e] rounded-xl px-4 py-3 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-indigo-500/60 focus:bg-[#0c0c18] focus:ring-1 focus:ring-indigo-500/15 transition-all";
 
-/* ──────────────────────── page ─────────────────────────── */
+/* page */
 
 export default function AdminPage() {
   const [workflowsList, setWorkflowsList] = useState<Workflow[]>([]);
-  const [activeTab, setActiveTab] = useState<"list" | "new" | "security">("list");
+  const [activeTab, setActiveTab] = useState<"list" | "new" | "security" | "categories" | "import-export">("list");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [previewVideo, setPreviewVideo] = useState<string | null>(null);
@@ -199,6 +210,13 @@ export default function AdminPage() {
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  /* SEO & Status state */
+  const [status, setStatus] = useState<"published" | "draft">("published");
+  const [publishedAt, setPublishedAt] = useState("");
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [ogImage, setOgImage] = useState("");
+
   /* File upload state */
   const [jsonFile, setJsonFile] = useState<File | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -208,11 +226,27 @@ export default function AdminPage() {
   const [videoPreview, setVideoPreview] = useState<string | null>(null);
   const [jsonFileName, setJsonFileName] = useState<string | null>(null);
 
+  /* Category management state */
+  const [customCategories, setCustomCategories] = useState<Category[]>([]);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [newCategory, setNewCategory] = useState<Partial<Category>>({
+    id: "", name: "", icon: "bolt", color: "from-indigo-500 to-violet-500",
+    bgColor: "from-indigo-500/10 to-violet-500/10", borderColor: "border-indigo-500/20",
+    hoverColor: "hover:border-indigo-500/50", description: "", order: 9, isActive: true
+  });
+
+  /* CSV Import state */
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [importResult, setImportResult] = useState<{ success: number; errors: string[] } | null>(null);
+
   const loadWorkflows = () => setWorkflowsList(getAllStoredWorkflows());
+  const loadCategories = () => setCustomCategories(getAllStoredCategories());
 
   useEffect(() => {
     loadWorkflows();
+    loadCategories();
     window.addEventListener("flowmarket_workflows_changed", loadWorkflows);
+    window.addEventListener("flowmarket_categories_changed", loadCategories);
 
     // Supabase Admin Session check
     getCurrentAdmin().then((admin) => {
@@ -244,6 +278,7 @@ export default function AdminPage() {
 
     return () => {
       window.removeEventListener("flowmarket_workflows_changed", loadWorkflows);
+      window.removeEventListener("flowmarket_categories_changed", loadCategories);
       window.removeEventListener("flowmarket_auth_changed", handleAuthChange);
     };
   }, []);
@@ -272,6 +307,11 @@ export default function AdminPage() {
     setComplexity(w.complexity as Complexity); setPrice(w.price); setNodes(w.nodes);
     setDemoVideo(w.demoVideo || "/videos/hero-workflow.mp4");
     setN8nJsonProtected(w.n8nJsonProtected || ""); setTags(w.tags.join(", ")); setIsFeatured(w.featured);
+    setStatus(w.status || "published");
+    setPublishedAt(w.publishedAt || "");
+    setMetaTitle(w.metaTitle || "");
+    setMetaDescription(w.metaDescription || "");
+    setOgImage(w.ogImage || "");
     setActiveTab("new"); window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -280,6 +320,7 @@ export default function AdminPage() {
     setCategory("marketing"); setComplexity("Débutant"); setPrice(29); setNodes(12);
     setDemoVideo("/videos/hero-workflow.mp4"); setN8nJsonProtected("");
     setTags("n8n, automatisation, productivité"); setIsFeatured(false); setJsonError(null);
+    setStatus("published"); setPublishedAt(""); setMetaTitle(""); setMetaDescription(""); setOgImage("");
     setJsonFile(null); setVideoFile(null); setCoverFile(null);
     setCoverPreview(null); setVideoPreview(null); setJsonFileName(null);
     setUploadProgress({});
@@ -341,6 +382,9 @@ export default function AdminPage() {
     const finalJsonProtected = uploadResults.find((u) => u.key === "json")?.result.url || n8nJsonProtected.trim() || JSON.stringify({ name: title, nodes: [], connections: {} });
     const finalCoverImage = uploadResults.find((u) => u.key === "cover")?.result.url || `/workflows/${category}.png`;
 
+    const now = new Date().toISOString().split("T")[0];
+    const finalPublishedAt = status === "published" && publishedAt ? publishedAt : (status === "published" ? now : undefined);
+
     const workflowData: Workflow = {
       id: workflowId,
       title: title.trim(),
@@ -359,9 +403,14 @@ export default function AdminPage() {
       reviews: 1,
       downloads: 0,
       featured: isFeatured,
+      status,
+      publishedAt: finalPublishedAt,
+      metaTitle: metaTitle.trim() || undefined,
+      metaDescription: metaDescription.trim() || undefined,
+      ogImage: ogImage.trim() || undefined,
       createdAt: editingId
-        ? (workflowsList.find((w) => w.id === editingId)?.createdAt || new Date().toISOString().split("T")[0])
-        : new Date().toISOString().split("T")[0],
+        ? (workflowsList.find((w) => w.id === editingId)?.createdAt || now)
+        : now,
     };
 
     saveWorkflow(workflowData);
@@ -398,13 +447,15 @@ export default function AdminPage() {
   const tabs = [
     { id: "list" as const, label: `Workflows`, count: workflowsList.length, icon: "bolt" },
     { id: "new" as const, label: editingId ? "Modifier" : "Ajouter", icon: "plus" },
+    { id: "categories" as const, label: "Catégories", icon: "folder" },
+    { id: "import-export" as const, label: "Import/Export", icon: "download" },
     { id: "security" as const, label: "Sécurité", icon: "shield" },
   ];
 
   return (
     <div className="min-h-screen text-white" style={{ background: "radial-gradient(ellipse at 20% 0%, #0d0a1f 0%, #07070d 50%)" }}>
 
-      {/* ── Delete Confirm Modal ── */}
+      {/* Delete Confirm Modal */}
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-[#0f0f1a] border border-red-500/20 rounded-2xl p-8 max-w-md w-full shadow-2xl" style={{ animation: "cookieBannerEnter 0.25s ease" }}>
@@ -429,7 +480,7 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ── Toast ── */}
+      {/* Toast */}
       {toastMessage && (
         <div
           className={`fixed bottom-6 right-6 z-50 px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl flex items-center gap-3 text-sm font-medium border ${
@@ -442,7 +493,7 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ── Video Preview Modal ── */}
+      {/* Video Preview Modal */}
       {previewVideo && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
           <div className="relative w-full max-w-3xl bg-[#0f0f1a] border border-[#2a2a3a] rounded-3xl overflow-hidden shadow-2xl" style={{ animation: "cookieBannerEnter 0.25s ease" }}>
@@ -466,10 +517,10 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* ── Main content ── */}
+      {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24">
 
-        {/* ── Greeting Alert Floating Card (Shown when admin enters) ── */}
+        {/* Greeting Alert Floating Card */}
         {showWelcomeAlert && (
           <div className="fixed top-24 right-6 z-50 max-w-sm w-full bg-[#0d0d1a]/95 border border-indigo-500/40 rounded-2xl p-4 shadow-2xl shadow-indigo-500/20 backdrop-blur-xl animate-fadeIn flex items-start gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 flex-shrink-0 mt-0.5">
@@ -495,7 +546,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ── Admin Greeting Banner (Supabase Session Bar) ── */}
+        {/* Admin Greeting Banner */}
         <div className="mb-8 p-4 sm:p-5 bg-[#0a0a14] border border-[#1e1e2e] hover:border-indigo-500/30 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 p-0.5 shadow-lg shadow-indigo-500/20 flex-shrink-0">
@@ -551,7 +602,7 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* ── Page Header ── */}
+        {/* Page Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase tracking-widest mb-4">
@@ -580,12 +631,12 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* ── Stats Grid ── */}
+        {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
           {stats.map((s) => <StatCard key={s.label} {...s} />)}
         </div>
 
-        {/* ── Tabs ── */}
+        {/* Tabs */}
         <div className="flex items-center gap-1 bg-[#0a0a14] border border-[#1a1a28] rounded-2xl p-1.5 mb-8 w-fit">
           {tabs.map((tab) => (
             <button key={tab.id} onClick={() => setActiveTab(tab.id)}
@@ -605,7 +656,7 @@ export default function AdminPage() {
           ))}
         </div>
 
-        {/* ════════════════ TAB 1: LIST ════════════════ */}
+        {/* TAB 1: LIST */}
         {activeTab === "list" && (
           <div>
             <div className="flex flex-col sm:flex-row gap-3 mb-5">
@@ -721,7 +772,7 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ════════════════ TAB 2: FORM ════════════════ */}
+        {/* TAB 2: FORM */}
         {activeTab === "new" && (
           <div>
             {/* Form header with steps */}
@@ -736,15 +787,17 @@ export default function AdminPage() {
               <div className="flex items-center gap-4 bg-[#0a0a14] border border-[#1a1a28] rounded-2xl px-5 py-3">
                 <StepBadge n={1} label="Infos" active={true} />
                 <div className="w-6 h-px bg-[#1e1e2e]" />
-                <StepBadge n={2} label="Démo" active={true} />
+                <StepBadge n={2} label="SEO / Statut" active={true} />
                 <div className="w-6 h-px bg-[#1e1e2e]" />
-                <StepBadge n={3} label="JSON" active={true} />
+                <StepBadge n={3} label="Démo" active={true} />
+                <div className="w-6 h-px bg-[#1e1e2e]" />
+                <StepBadge n={4} label="JSON" active={true} />
               </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">
 
-              {/* ─── 1. Public Info ─── */}
+              {/* 1. Public Info */}
               <SectionCard title="Informations Publiques" icon="eye" step={1} accent="indigo">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -872,8 +925,48 @@ export default function AdminPage() {
                 </div>
               </SectionCard>
 
-              {/* ─── 2. Options ─── */}
-              <SectionCard title="Options & Difficulté" icon="star" step={2} accent="indigo">
+              {/* SEO & Status */}
+              <SectionCard title="SEO & Statut de Publication" icon="shield" step={2} accent="amber">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <FieldLabel>Statut</FieldLabel>
+                    <div className="grid grid-cols-2 gap-2 mt-1">
+                      <label className={`p-3 rounded-xl border text-center cursor-pointer transition-all ${status === "published" ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400" : "border-[#1e1e2e] text-gray-700 hover:border-[#2e2e45]"}`}>
+                        <input type="radio" name="status" value="published" checked={status === "published"} onChange={() => setStatus("published")} className="sr-only" />
+                        <div className="font-bold text-xs">Publié</div>
+                        <div className="text-[10px] mt-0.5 opacity-70">Visible sur le site</div>
+                      </label>
+                      <label className={`p-3 rounded-xl border text-center cursor-pointer transition-all ${status === "draft" ? "bg-amber-500/10 border-amber-500/20 text-amber-400" : "border-[#1e1e2e] text-gray-700 hover:border-[#2e2e45]"}`}>
+                        <input type="radio" name="status" value="draft" checked={status === "draft"} onChange={() => setStatus("draft")} className="sr-only" />
+                        <div className="font-bold text-xs">Brouillon</div>
+                        <div className="text-[10px] mt-0.5 opacity-70">Caché du public</div>
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <FieldLabel hint="Si publié, date de mise en ligne">Date de publication</FieldLabel>
+                    <input type="date" value={publishedAt} onChange={(e) => setPublishedAt(e.target.value)} className={inputBase} />
+                  </div>
+                  <div>
+                    <FieldLabel hint="Max 60 caractères pour Google">Meta Title</FieldLabel>
+                    <input type="text" placeholder="Titre SEO (laissé vide = titre du workflow)" value={metaTitle} onChange={(e) => setMetaTitle(e.target.value)} className={inputBase} maxLength={60} />
+                    <span className="text-[10px] text-gray-700 mt-1 block">{metaTitle.length}/60</span>
+                  </div>
+                  <div>
+                    <FieldLabel hint="Max 160 caractères pour Google">Meta Description</FieldLabel>
+                    <textarea rows={2} placeholder="Description SEO (laissé vide = description courte)" value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} className={`${inputBase} resize-none`} maxLength={160} />
+                    <span className="text-[10px] text-gray-700 mt-1 block">{metaDescription.length}/160</span>
+                  </div>
+                  <div>
+                    <FieldLabel>OG Image (partage réseaux sociaux)</FieldLabel>
+                    <input type="text" placeholder="https://.../og-image.jpg" value={ogImage} onChange={(e) => setOgImage(e.target.value)} className={inputBase} />
+                    <span className="text-[10px] text-gray-700 mt-1 block">Recommandé : 1200×630 px</span>
+                  </div>
+                </div>
+              </SectionCard>
+
+              {/* 2. Options */}
+              <SectionCard title="Options & Difficulté" icon="star" step={3} accent="indigo">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <FieldLabel>Niveau de difficulté</FieldLabel>
@@ -906,8 +999,8 @@ export default function AdminPage() {
                 </div>
               </SectionCard>
 
-              {/* ─── 3. Front-end Demo ─── */}
-              <SectionCard title="Démo Front-End (visible par tous)" icon="video" step={3} accent="emerald">
+              {/* 3. Front-end Demo */}
+              <SectionCard title="Démo Front-End (visible par tous)" icon="video" step={4} accent="emerald">
                 <p className="text-xs text-gray-700 mb-5 flex items-center gap-2">
                   <Icon name="shield" className="w-3.5 h-3.5 text-emerald-500" />
                   Seul le résultat visuel est présenté — jamais la logique interne n8n.
@@ -988,8 +1081,8 @@ export default function AdminPage() {
                 </div>
               </SectionCard>
 
-              {/* ─── 4. Protected JSON ─── */}
-              <SectionCard title="Fichier Source n8n — Backend Protégé" icon="lock" step={4} accent="amber" badge="CONFIDENTIEL">
+              {/* 4. Protected JSON */}
+              <SectionCard title="Fichier Source n8n — Backend Protégé" icon="lock" step={5} accent="amber" badge="CONFIDENTIEL">
                 <p className="text-xs text-gray-700 mb-4 leading-relaxed">
                   Collez votre JSON n8n exporté ou chargez un fichier .json. Ce code est inaccessible aux visiteurs et livré uniquement après paiement validé.
                 </p>
@@ -1074,7 +1167,7 @@ export default function AdminPage() {
                 )}
               </SectionCard>
 
-              {/* ─── Submit Bar ─── */}
+              {/* Submit Bar */}
               <div className="flex items-center justify-between py-2 border-t border-[#1a1a28]">
                 <button type="button" onClick={resetForm}
                   className="px-5 py-3 rounded-xl border border-[#1e1e2e] text-gray-600 hover:text-white hover:bg-[#13131f] hover:border-[#2e2e45] text-sm font-medium transition-all">
@@ -1105,7 +1198,249 @@ export default function AdminPage() {
           </div>
         )}
 
-        {/* ════════════════ TAB 3: SECURITY ════════════════ */}
+        {/* TAB: CATEGORIES */}
+        {activeTab === "categories" && (
+          <div className="space-y-5">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-2xl font-extrabold text-white">Gestion des Catégories</h2>
+                <p className="text-gray-700 text-sm mt-1">Ajoutez, modifiez, réordonnez ou désactivez les catégories.</p>
+              </div>
+              <button onClick={() => { setEditingCategoryId(null); setNewCategory({ id: "", name: "", icon: "bolt", color: "from-indigo-500 to-violet-500", bgColor: "from-indigo-500/10 to-violet-500/10", borderColor: "border-indigo-500/20", hoverColor: "hover:border-indigo-500/50", description: "", order: 9, isActive: true }); }}
+                className="btn-shine px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#EA4B71] to-[#F472A4] text-white text-sm font-bold hover:shadow-lg hover:shadow-[#EA4B71]/25 transition-all flex items-center gap-2">
+                <Icon name="plus" className="w-4 h-4" />
+                Nouvelle catégorie
+              </button>
+            </div>
+
+            {/* Categories Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                ...categories.filter(c => !customCategories.some(cc => cc.id === c.id)),
+                ...customCategories
+              ].sort((a, b) => a.order - b.order).map((cat) => {
+                const isCustom = customCategories.some(cc => cc.id === cat.id);
+                const isEditing = editingCategoryId === cat.id;
+                return (
+                  <div key={cat.id} className="bg-[#0a0a14] border border-[#1e1e2e] rounded-2xl p-5 transition-all hover:border-[#2e2e45]">
+                    {isEditing ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-2 gap-3">
+                          <div>
+                            <FieldLabel required>Nom</FieldLabel>
+                            <input type="text" value={newCategory.name} onChange={(e) => setNewCategory({...newCategory, name: e.target.value})} className={inputBase} />
+                          </div>
+                          <div>
+                            <FieldLabel required>ID (slug)</FieldLabel>
+                            <input type="text" value={newCategory.id} onChange={(e) => setNewCategory({...newCategory, id: e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-")})} className={inputBase} />
+                          </div>
+                          <div>
+                            <FieldLabel>Icône</FieldLabel>
+                            <select value={newCategory.icon} onChange={(e) => setNewCategory({...newCategory, icon: e.target.value})} className={inputBase}>
+                              <option value="marketing">marketing</option>
+                              <option value="productivity">productivity</option>
+                              <option value="ecommerce">ecommerce</option>
+                              <option value="hr">hr</option>
+                              <option value="finance">finance</option>
+                              <option value="dev">dev</option>
+                              <option value="ai">ai</option>
+                              <option value="social">social</option>
+                              <option value="bolt">bolt</option>
+                            </select>
+                          </div>
+                          <div>
+                            <FieldLabel>Ordre</FieldLabel>
+                            <input type="number" min="1" value={newCategory.order} onChange={(e) => setNewCategory({...newCategory, order: parseInt(e.target.value)})} className={inputBase} />
+                          </div>
+                        </div>
+                        <div>
+                          <FieldLabel>Gradient couleur</FieldLabel>
+                          <input type="text" value={newCategory.color} onChange={(e) => setNewCategory({...newCategory, color: e.target.value})} className={inputBase} placeholder="from-indigo-500 to-violet-500" />
+                        </div>
+                        <div>
+                          <FieldLabel>Description</FieldLabel>
+                          <input type="text" value={newCategory.description} onChange={(e) => setNewCategory({...newCategory, description: e.target.value})} className={inputBase} />
+                        </div>
+                        <label className="flex items-center gap-3 p-3 rounded-xl border border-[#1e1e2e] hover:border-[#2e2e45] bg-[#080812] cursor-pointer transition-all">
+                          <input type="checkbox" checked={newCategory.isActive} onChange={(e) => setNewCategory({...newCategory, isActive: e.target.checked})} className="sr-only" />
+                          <div className={`w-11 h-6 rounded-full relative transition-all duration-300 ${newCategory.isActive ? "bg-emerald-500" : "bg-[#1e1e2e]"}`}>
+                            <span className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 ${newCategory.isActive ? "left-5.5" : "left-0.5"}`} />
+                          </div>
+                          <span className="text-sm font-semibold text-white">Active</span>
+                        </label>
+                        <div className="flex gap-2 pt-2">
+                          <button onClick={() => { 
+        const color = newCategory.color || "from-indigo-500 to-violet-500";
+        saveCategory({...newCategory, id: newCategory.id || cat.id, color, bgColor: color.replace("from-", "from-").replace("to-", "/10 to-"), borderColor: "border-" + color.split(" ")[0].replace("from-", "").replace("500", "500/20"), hoverColor: "hover:border-" + color.split(" ")[0].replace("from-", "").replace("500", "500/50") } as Category); 
+        setEditingCategoryId(null); 
+        showToast("Catégorie sauvegardée !"); 
+      }}
+                            className="flex-1 btn-shine px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#EA4B71] to-[#F472A4] text-white text-sm font-bold hover:shadow-lg hover:shadow-[#EA4B71]/25 transition-all">
+                            {isCustom ? "Mettre à jour" : "Créer"}
+                          </button>
+                          <button onClick={() => { setEditingCategoryId(null); setNewCategory({ id: "", name: "", icon: "bolt", color: "from-indigo-500 to-violet-500", bgColor: "from-indigo-500/10 to-violet-500/10", borderColor: "border-indigo-500/20", hoverColor: "hover:border-indigo-500/50", description: "", order: 9, isActive: true }); }}
+                            className="px-4 py-2.5 rounded-xl border border-[#1e1e2e] text-gray-600 hover:text-white hover:bg-[#13131f] hover:border-[#2e2e45] text-sm font-medium transition-all">
+                            Annuler
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: cat.color.replace("from-", "from-").replace("to-", " to ").replace("500", "500/20") }}>
+                              <Icon name={cat.icon} className="w-6 h-6" style={{ color: cat.color.split(" ")[0].replace("from-", "") }} />
+                            </div>
+                            <div>
+                              <div className="font-bold text-white text-sm">{cat.name}</div>
+                              <div className="text-[10px] text-gray-600 font-mono">{cat.id}</div>
+                              {isCustom && <span className="text-[9px] px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-400">Personnalisée</span>}
+                            </div>
+                          </div>
+                          {isCustom && (
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full ${cat.isActive ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" : "bg-gray-500/10 text-gray-500 border border-gray-500/20"}`}>
+                              {cat.isActive ? "Active" : "Inactive"}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-gray-600 line-clamp-2">{cat.description}</p>
+                        <div className="flex items-center justify-between pt-2 border-t border-[#1a1a28]">
+                          <span className="text-[10px] text-gray-700">Ordre : {cat.order}</span>
+                          <div className="flex gap-1">
+                            <button onClick={() => setEditingCategoryId(cat.id)}
+                              className="p-2 rounded-lg bg-white/2 hover:bg-amber-500/15 text-gray-700 hover:text-amber-300 transition-colors" title="Modifier">
+                              <Icon name="edit" className="w-3.5 h-3.5" />
+                            </button>
+                            {isCustom && (
+                              <button onClick={() => { if (confirm("Supprimer cette catégorie ?")) { deleteCategory(cat.id); showToast("Catégorie supprimée."); }}}
+                                className="p-2 rounded-lg bg-white/2 hover:bg-red-500/15 text-gray-700 hover:text-red-400 transition-colors" title="Supprimer">
+                                <Icon name="trash" className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* TAB: IMPORT/EXPORT */}
+        {activeTab === "import-export" && (
+          <div className="space-y-6">
+            {/* Export Section */}
+            <SectionCard title="Exporter les Workflows" icon="download" step={1} accent="emerald">
+              <p className="text-xs text-gray-700 mb-6 leading-relaxed">
+                Téléchargez un fichier CSV contenant tous les workflows (par défaut + personnalisés) avec leurs métadonnées complètes.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <button onClick={() => downloadCsv()}
+                  className="flex-1 btn-shine px-6 py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-sm hover:shadow-lg hover:shadow-emerald-500/30 transition-all flex items-center justify-center gap-2">
+                  <Icon name="download" className="w-5 h-5" />
+                  Exporter en CSV
+                </button>
+                <div className="flex-1 p-4 bg-[#080812] border border-[#1e1e2e] rounded-xl">
+                  <p className="text-[11px] text-gray-600 mb-2">Colonnes incluses :</p>
+                  <div className="grid grid-cols-2 gap-1 text-[10px] text-gray-500">
+                    <span>id, title, slug</span>
+                    <span>description, longDescription</span>
+                    <span>price, category, tags</span>
+                    <span>image, rating, reviews</span>
+                    <span>downloads, featured, createdAt</span>
+                    <span>updatedAt, nodes, complexity</span>
+                    <span>demoVideo, demoPoster</span>
+                    <span>n8nJsonProtected, status</span>
+                    <span>publishedAt, metaTitle</span>
+                    <span>metaDescription, ogImage</span>
+                  </div>
+                </div>
+              </div>
+            </SectionCard>
+
+            {/* Import Section */}
+            <SectionCard title="Importer des Workflows (CSV)" icon="upload" step={2} accent="amber" badge="ATTENTION">
+              <p className="text-xs text-gray-700 mb-6 leading-relaxed">
+                Importez un fichier CSV exporté précédemment. Les workflows existants (même ID) seront mis à jour, les nouveaux seront créés.
+              </p>
+              
+              <div className="space-y-4">
+                <FieldLabel>Fichier CSV</FieldLabel>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".csv,text/csv"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setCsvFile(file);
+                        const text = await parseCsvFile(file);
+                        const result = importWorkflowsFromCsv(text);
+                        setImportResult(result);
+                        if (result.success > 0) {
+                          showToast(`${result.success} workflow${result.success > 1 ? "s" : ""} importé${result.success > 1 ? "s" : ""} !`);
+                        }
+                        if (result.errors.length > 0) {
+                          showToast(`${result.errors.length} erreur${result.errors.length > 1 ? "s" : ""} — voir détails`, "error");
+                        }
+                      }
+                    }}
+                    className={`${inputBase} cursor-pointer`}
+                  />
+                  {csvFile && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 text-[11px] text-emerald-400">
+                      <Icon name="check" className="w-3.5 h-3.5" />
+                      {csvFile.name}
+                    </div>
+                  )}
+                </div>
+
+                {importResult && (
+                  <div className="p-4 rounded-xl bg-[#080812] border border-[#1e1e2e]">
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/15 border border-emerald-500/20 flex items-center justify-center">
+                        <Icon name="check" className="w-5 h-5 text-emerald-400" />
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">{importResult.success} workflow(s) importé(s) avec succès</p>
+                        {importResult.errors.length > 0 && (
+                          <p className="text-[11px] text-red-400">{importResult.errors.length} erreur(s)</p>
+                        )}
+                      </div>
+                    </div>
+                    {importResult.errors.length > 0 && (
+                      <details className="group">
+                        <summary className="text-[11px] text-red-400 hover:text-red-300 cursor-pointer flex items-center gap-1.5">
+                          <Icon name="alert" className="w-3.5 h-3.5" /> Voir les erreurs
+                        </summary>
+                        <div className="mt-2 space-y-1 max-h-40 overflow-y-auto">
+                          {importResult.errors.map((err, i) => (
+                            <p key={i} className="text-[10px] text-red-400/80 font-mono">{err}</p>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </div>
+                )}
+
+                <div className="p-4 bg-[#080812] border border-[#1e1e2e] rounded-xl">
+                  <p className="text-[11px] text-gray-600 mb-3">Format attendu (en-têtes) :</p>
+                  <code className="text-[9px] text-gray-500 bg-[#04040a] p-2 rounded block overflow-x-auto">
+                    {CSV_HEADERS.join(", ")}
+                  </code>
+                  <p className="text-[10px] text-gray-700 mt-2">
+                    Tags séparés par point-virgule (;). Booléens : true/false. JSON n8n dans la colonne n8nJsonProtected.
+                  </p>
+                </div>
+              </div>
+            </SectionCard>
+          </div>
+        )}
+
+        {/* TAB 3: SECURITY */}
         {activeTab === "security" && (
           <div className="space-y-5">
             {/* Hero card */}
