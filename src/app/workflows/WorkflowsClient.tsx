@@ -54,7 +54,48 @@ export default function WorkflowsClient() {
   const [state, setState] = useState(getInitialState);
   const [quickViewWorkflow, setQuickViewWorkflow] = useState<Workflow | null>(null);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
-  const [displayedWorkflows, setDisplayedWorkflows] = useState<Workflow[]>([]);
+  
+  // Initialize displayed workflows with first page based on initial state
+  const initialFiltered = useMemo(() => {
+    let result = [...defaultWorkflows];
+    const custom = getAllStoredWorkflows();
+    const map = new Map<string, Workflow>();
+    defaultWorkflows.forEach((w) => map.set(w.id, w));
+    custom.forEach((w) => map.set(w.id, w));
+    result = Array.from(map.values());
+    
+    const initialState = getInitialState();
+    if (initialState.selectedCategory !== "all") {
+      result = result.filter((w) => w.category === initialState.selectedCategory);
+    }
+    if (initialState.selectedComplexity !== "all") {
+      result = result.filter((w) => w.complexity === initialState.selectedComplexity);
+    }
+    if (initialState.priceRange === "free") {
+      result = result.filter((w) => w.price === 0);
+    } else if (initialState.priceRange === "paid") {
+      result = result.filter((w) => w.price > 0);
+    }
+    if (initialState.searchQuery) {
+      const q = initialState.searchQuery.toLowerCase();
+      result = result.filter(
+        (w) =>
+          w.title.toLowerCase().includes(q) ||
+          w.description.toLowerCase().includes(q) ||
+          w.tags.some((t) => t.toLowerCase().includes(q))
+      );
+    }
+    switch (initialState.sortBy) {
+      case "price-asc": result.sort((a, b) => a.price - b.price); break;
+      case "price-desc": result.sort((a, b) => b.price - a.price); break;
+      case "rating": result.sort((a, b) => b.rating - a.rating); break;
+      case "new": result.sort((a, b) => b.createdAt.localeCompare(a.createdAt)); break;
+      default: result.sort((a, b) => b.downloads - a.downloads);
+    }
+    return result.slice(0, ITEMS_PER_PAGE);
+  }, []);
+  
+  const [displayedWorkflows, setDisplayedWorkflows] = useState<Workflow[]>(initialFiltered);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
 
   // All workflows (default + custom from localStorage)
@@ -82,7 +123,6 @@ export default function WorkflowsClient() {
   // Sync state with URL on mount/back-forward
   useEffect(() => {
     setState(getInitialState());
-    setDisplayedWorkflows([]);
   }, [searchParams]);
 
   // Filter & sort workflows
