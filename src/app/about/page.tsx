@@ -84,9 +84,9 @@ export default function AboutPage() {
                   loop
                   playsInline
                   className="w-full h-full object-cover opacity-80"
-                  poster="/videos/Data_packets_flowing_through_wor._20261006183221.mp4"
+                  poster="/videos/data-flow.mp4"
                 >
-                  <source src="/videos/Data_packets_flowing_through_wor._20261006183221.mp4" type="video/mp4" />
+                  <source src="/videos/data-flow.mp4" type="video/mp4" />
                 </video>
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/60 via-transparent to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4 text-center">
