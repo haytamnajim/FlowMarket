@@ -70,21 +70,6 @@ export default function WorkflowCard({ workflow, onQuickView }: WorkflowCardProp
                 {workflow.nodes} nœuds
               </span>
             </div>
-
-            {/* Quick View Button on hover */}
-            {onQuickView && (
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onQuickView(workflow);
-                }}
-                className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-medium text-sm opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 hover:shadow-lg hover:shadow-indigo-500/25 z-10 flex items-center justify-center gap-2"
-              >
-                <Icon name="eye" className="w-4 h-4" />
-                Aperçu rapide
-              </button>
-            )}
           </div>
 
           {/* Content */}
