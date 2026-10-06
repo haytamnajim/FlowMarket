@@ -9,6 +9,16 @@ import { getCurrentAdmin, logOutAdmin, AdminUser, uploadWorkflowFile, STORAGE_BU
 
 /* ─────────────────────── constants ─────────────────────── */
 
+// n8n Brand Colors
+const N8N_COLORS = {
+  primary: "#EA4B71",
+  primaryLight: "#F472A4",
+  primaryDark: "#D63A63",
+  gradient: "linear-gradient(135deg, #EA4B71 0%, #F472A4 50%, #FF6B9D 100%)",
+  gradientSoft: "linear-gradient(135deg, #EA4B71/15 0%, #F472A4/10 50%, #FF6B9D/5 100%)",
+  gradientBorder: "linear-gradient(135deg, #EA4B71/30 0%, #F472A4/20 100%)",
+} as const;
+
 const COMPLEXITY_CONFIG = {
   Débutant: {
     color: "emerald",
@@ -26,7 +36,7 @@ const COMPLEXITY_CONFIG = {
   },
   Avancé: {
     color: "rose",
-    dot: "#f43f5e",
+    dot: N8N_COLORS.primary,
     bg: "bg-rose-500/10 border-rose-500/25",
     text: "text-rose-400",
     hint: "Webhooks & scripts",
@@ -36,7 +46,7 @@ const COMPLEXITY_CONFIG = {
 type Complexity = keyof typeof COMPLEXITY_CONFIG;
 
 const CATEGORY_COLORS: Record<string, string> = {
-  marketing: "#6366f1",
+  marketing: N8N_COLORS.primary,
   finance: "#10b981",
   productivity: "#f59e0b",
   ecommerce: "#f43f5e",
