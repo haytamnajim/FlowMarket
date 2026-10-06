@@ -5,7 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { categories, Workflow } from "@/data/workflows";
 import { getAllStoredWorkflows, saveWorkflow, deleteWorkflow } from "@/data/workflowStore";
-import { getCurrentAdmin, logOutAdmin, AdminUser } from "@/lib/supabase";
+import { getCurrentAdmin, logOutAdmin, AdminUser, uploadWorkflowFile, STORAGE_BUCKETS } from "@/lib/supabase";
 
 /* ─────────────────────── constants ─────────────────────── */
 
@@ -189,6 +189,15 @@ export default function AdminPage() {
   const [jsonError, setJsonError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
+  /* File upload state */
+  const [jsonFile, setJsonFile] = useState<File | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>({});
+  const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [jsonFileName, setJsonFileName] = useState<string | null>(null);
+
   const loadWorkflows = () => setWorkflowsList(getAllStoredWorkflows());
 
   useEffect(() => {
@@ -261,28 +270,95 @@ export default function AdminPage() {
     setCategory("marketing"); setComplexity("Débutant"); setPrice(29); setNodes(12);
     setDemoVideo("/videos/hero-workflow.mp4"); setN8nJsonProtected("");
     setTags("n8n, automatisation, productivité"); setIsFeatured(false); setJsonError(null);
+    setJsonFile(null); setVideoFile(null); setCoverFile(null);
+    setCoverPreview(null); setVideoPreview(null); setJsonFileName(null);
+    setUploadProgress({});
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !slug.trim()) { showToast("Titre et slug obligatoires.", "error"); return; }
     if (jsonError) { showToast("Corrigez le JSON n8n.", "error"); return; }
+
+    const workflowId = editingId || `custom-${Date.now()}`;
     setIsSaving(true);
-    await new Promise((r) => setTimeout(r, 600)); // UX delay
+    setUploadProgress({});
+
+    // Upload files in parallel
+    const uploads: Promise<{ key: string; result: Awaited<ReturnType<typeof uploadWorkflowFile>> }>[] = [];
+
+    if (jsonFile) {
+      uploads.push(
+        uploadWorkflowFile(jsonFile, STORAGE_BUCKETS.WORKFLOW_JSON, workflowId).then((result) => ({
+          key: "json",
+          result,
+        }))
+      );
+    }
+
+    if (videoFile) {
+      uploads.push(
+        uploadWorkflowFile(videoFile, STORAGE_BUCKETS.WORKFLOW_VIDEO, workflowId).then((result) => ({
+          key: "video",
+          result,
+        }))
+      );
+    }
+
+    if (coverFile) {
+      uploads.push(
+        uploadWorkflowFile(coverFile, STORAGE_BUCKETS.WORKFLOW_COVER, workflowId).then((result) => ({
+          key: "cover",
+          result,
+        }))
+      );
+    }
+
+    const uploadResults = await Promise.all(uploads);
+
+    // Check for errors
+    for (const { key, result } of uploadResults) {
+      if (result.error) {
+        setIsSaving(false);
+        showToast(`Erreur upload ${key} : ${result.error}`, "error");
+        return;
+      }
+      setUploadProgress((prev) => ({ ...prev, [key]: 100 }));
+    }
+
+    // Determine final URLs (uploaded or existing)
+    const finalDemoVideo = uploadResults.find((u) => u.key === "video")?.result.url || demoVideo.trim();
+    const finalJsonProtected = uploadResults.find((u) => u.key === "json")?.result.url || n8nJsonProtected.trim() || JSON.stringify({ name: title, nodes: [], connections: {} });
+    const finalCoverImage = uploadResults.find((u) => u.key === "cover")?.result.url || `/workflows/${category}.png`;
+
     const workflowData: Workflow = {
-      id: editingId || `custom-${Date.now()}`, title: title.trim(), slug: slug.trim(),
-      description: description.trim(), longDescription: longDescription.trim() || description.trim(),
-      category, complexity: complexity as Workflow["complexity"], price: Number(price), nodes: Number(nodes),
-      demoVideo: demoVideo.trim(),
-      n8nJsonProtected: n8nJsonProtected.trim() || JSON.stringify({ name: title, nodes: [], connections: {} }),
+      id: workflowId,
+      title: title.trim(),
+      slug: slug.trim(),
+      description: description.trim(),
+      longDescription: longDescription.trim() || description.trim(),
+      category,
+      complexity: complexity as Workflow["complexity"],
+      price: Number(price),
+      nodes: Number(nodes),
+      demoVideo: finalDemoVideo,
+      n8nJsonProtected: finalJsonProtected,
       tags: tags.split(",").map((t) => t.trim()).filter(Boolean),
-      image: `/workflows/${category}.png`, rating: 5.0, reviews: 1, downloads: 0,
-      featured: isFeatured, createdAt: new Date().toISOString().split("T")[0],
+      image: finalCoverImage,
+      rating: 5.0,
+      reviews: 1,
+      downloads: 0,
+      featured: isFeatured,
+      createdAt: editingId
+        ? (workflowsList.find((w) => w.id === editingId)?.createdAt || new Date().toISOString().split("T")[0])
+        : new Date().toISOString().split("T")[0],
     };
+
     saveWorkflow(workflowData);
     setIsSaving(false);
     showToast(editingId ? "✅ Workflow mis à jour avec succès !" : "🚀 Nouveau workflow publié !");
-    resetForm(); setActiveTab("list");
+    resetForm();
+    setActiveTab("list");
   };
 
   const handleDelete = (id: string, wTitle: string) => setDeleteConfirm({ id, title: wTitle });
@@ -717,6 +793,56 @@ export default function AdminPage() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Cover Image Upload */}
+                  <div className="md:col-span-2">
+                    <FieldLabel>Image de couverture (PNG, JPG, WebP, GIF — max 10 MB)</FieldLabel>
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setCoverFile(file);
+                            setCoverPreview(URL.createObjectURL(file));
+                          }
+                        }}
+                        className={`${inputBase} cursor-pointer`}
+                        disabled={isSaving}
+                      />
+                      {coverPreview && (
+                        <div className="mt-3 flex items-center gap-4">
+                          <div className="relative w-24 h-24 rounded-xl overflow-hidden border border-[#2a2a3a] flex-shrink-0">
+                            <img src={coverPreview} alt="Aperçu couverture" className="w-full h-full object-cover" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-white truncate">{coverFile?.name}</p>
+                            <p className="text-[11px] text-gray-500">{coverFile ? (coverFile.size / 1024).toFixed(1) + " KB" : ""}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => { setCoverFile(null); setCoverPreview(null); }}
+                            className="p-2 rounded-lg hover:bg-white/10 text-gray-500 hover:text-white transition-colors"
+                            aria-label="Supprimer l'image"
+                          >
+                            <Icon name="trash" className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                      {uploadProgress.cover && (
+                        <div className="mt-2 h-2 bg-[#1e1e2e] rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-indigo-500 transition-all duration-300"
+                            style={{ width: `${uploadProgress.cover}%` }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-gray-700 mt-1">
+                      Recommandé : 1200×675 px (ratio 16:9). Image par défaut : icône de catégorie.
+                    </p>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
@@ -776,18 +902,75 @@ export default function AdminPage() {
                   <Icon name="shield" className="w-3.5 h-3.5 text-emerald-500" />
                   Seul le résultat visuel est présenté — jamais la logique interne n8n.
                 </p>
+                
+                {/* File Upload for Video */}
+                <div className="space-y-4 mb-4">
+                  <FieldLabel>Fichier vidéo (MP4, WebM, MOV — max 100 MB)</FieldLabel>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setVideoFile(file);
+                          setVideoPreview(URL.createObjectURL(file));
+                          setDemoVideo(""); // Clear URL when file selected
+                        }
+                      }}
+                      className={`${inputBase} cursor-pointer`}
+                      disabled={isSaving}
+                    />
+                    {videoFile && (
+                      <div className="mt-2 p-3 bg-emerald-500/8 border border-emerald-500/20 rounded-xl flex items-center gap-3">
+                        <Icon name="video" className="w-5 h-5 text-emerald-400" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-emerald-300 truncate">{videoFile.name}</p>
+                          <p className="text-[11px] text-emerald-500/80">{(videoFile.size / 1024 / 1024).toFixed(1)} MB</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { setVideoFile(null); setVideoPreview(null); setDemoVideo("/videos/hero-workflow.mp4"); }}
+                          className="p-1 rounded-lg hover:bg-white/10 text-emerald-400 hover:text-emerald-200 transition-colors"
+                          aria-label="Supprimer la vidéo"
+                        >
+                          <Icon name="x" className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    {uploadProgress.video && (
+                      <div className="mt-2 h-2 bg-[#1e1e2e] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-emerald-500 transition-all duration-300"
+                          style={{ width: `${uploadProgress.video}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* URL fallback */}
                 <div className="flex gap-3">
-                  <input type="text" placeholder="/videos/hero-workflow.mp4 ou URL mp4" value={demoVideo}
-                    onChange={(e) => setDemoVideo(e.target.value)} className={`${inputBase} flex-1`} />
-                  <button type="button" onClick={() => setPreviewVideo(demoVideo)}
-                    className="px-5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 text-xs font-bold transition-colors flex-shrink-0 flex items-center gap-1.5">
+                  <input
+                    type="text"
+                    placeholder="Ou URL mp4 externe"
+                    value={demoVideo}
+                    onChange={(e) => { setDemoVideo(e.target.value); setVideoFile(null); setVideoPreview(null); }}
+                    className={`${inputBase} flex-1`}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setPreviewVideo(demoVideo || videoPreview)}
+                    disabled={!demoVideo && !videoPreview}
+                    className="px-5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 text-xs font-bold transition-colors flex-shrink-0 flex items-center gap-1.5 opacity-50 hover:opacity-100"
+                  >
                     <Icon name="video" className="w-3.5 h-3.5" />Tester
                   </button>
                 </div>
                 <div className="mt-2.5 flex items-center gap-2 text-[11px] text-gray-700">
                   Vidéos locales :
                   {["/videos/hero-workflow.mp4", "/videos/cta-canvas.mp4"].map((v) => (
-                    <button key={v} type="button" onClick={() => setDemoVideo(v)}
+                    <button key={v} type="button" onClick={() => { setDemoVideo(v); setVideoFile(null); setVideoPreview(null); }}
                       className="text-indigo-500 hover:text-indigo-400 underline underline-offset-2 transition-colors">
                       {v.split("/").pop()}
                     </button>
@@ -798,14 +981,66 @@ export default function AdminPage() {
               {/* ─── 4. Protected JSON ─── */}
               <SectionCard title="Fichier Source n8n — Backend Protégé" icon="lock" step={4} accent="amber" badge="CONFIDENTIEL">
                 <p className="text-xs text-gray-700 mb-4 leading-relaxed">
-                  Collez votre JSON n8n exporté. Ce code est inaccessible aux visiteurs et livré uniquement après paiement validé.
+                  Collez votre JSON n8n exporté ou chargez un fichier .json. Ce code est inaccessible aux visiteurs et livré uniquement après paiement validé.
                 </p>
+
+                {/* File Upload for JSON */}
+                <div className="space-y-4 mb-4">
+                  <FieldLabel>Fichier JSON n8n (max 5 MB)</FieldLabel>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="application/json,text/json,.json"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setJsonFile(file);
+                          setJsonFileName(file.name);
+                          setN8nJsonProtected(""); // Clear textarea when file selected
+                          setJsonError(null);
+                        }
+                      }}
+                      className={`${inputBase} cursor-pointer`}
+                      disabled={isSaving}
+                    />
+                    {jsonFile && (
+                      <div className="mt-2 p-3 bg-amber-500/8 border border-amber-500/20 rounded-xl flex items-center gap-3">
+                        <Icon name="key" className="w-5 h-5 text-amber-400" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-amber-300 truncate">{jsonFile.name}</p>
+                          <p className="text-[11px] text-amber-500/80">{(jsonFile.size / 1024).toFixed(1)} KB</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { setJsonFile(null); setJsonFileName(null); }}
+                          className="p-1 rounded-lg hover:bg-white/10 text-amber-400 hover:text-amber-200 transition-colors"
+                          aria-label="Supprimer le fichier JSON"
+                        >
+                          <Icon name="x" className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
+                    {uploadProgress.json && (
+                      <div className="mt-2 h-2 bg-[#1e1e2e] rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-amber-500 transition-all duration-300"
+                          style={{ width: `${uploadProgress.json}%` }}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Textarea fallback */}
                 <div className="relative">
                   <textarea rows={8}
                     placeholder={`{\n  "name": "Mon Workflow",\n  "nodes": [...],\n  "connections": {...}\n}`}
-                    value={n8nJsonProtected} onChange={(e) => handleJsonChange(e.target.value)}
-                    className={`${inputBase} font-mono text-xs leading-relaxed ${jsonError ? "border-red-500/50 focus:border-red-500" : ""}`} />
-                  {n8nJsonProtected.trim() && !jsonError && (
+                    value={n8nJsonProtected}
+                    onChange={(e) => { handleJsonChange(e.target.value); setJsonFile(null); setJsonFileName(null); }}
+                    className={`${inputBase} font-mono text-xs leading-relaxed ${jsonError ? "border-red-500/50 focus:border-red-500" : ""}`}
+                    disabled={!!jsonFile}
+                  />
+                  {n8nJsonProtected.trim() && !jsonError && !jsonFile && (
                     <div className="absolute top-3 right-3 flex items-center gap-1 bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1 rounded-lg">
                       <Icon name="check" className="w-3 h-3 text-emerald-400" />
                       <span className="text-[10px] text-emerald-400 font-bold">JSON valide</span>
@@ -817,9 +1052,14 @@ export default function AdminPage() {
                     <Icon name="alert" className="w-3.5 h-3.5 flex-shrink-0" />{jsonError}
                   </p>
                 )}
-                {n8nJsonProtected.trim() && !jsonError && (
+                {n8nJsonProtected.trim() && !jsonError && !jsonFile && (
                   <p className="text-[11px] text-gray-700 mt-2">
                     {n8nJsonProtected.length.toLocaleString()} caractères · {(new Blob([n8nJsonProtected]).size / 1024).toFixed(1)} Ko
+                  </p>
+                )}
+                {jsonFile && !jsonError && (
+                  <p className="text-[11px] text-gray-700 mt-2 text-amber-400">
+                    Fichier prêt pour l'upload · {jsonFileName}
                   </p>
                 )}
               </SectionCard>
