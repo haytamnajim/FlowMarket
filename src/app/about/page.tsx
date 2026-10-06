@@ -20,13 +20,13 @@ export default function AboutPage() {
             muted
             loop
             playsInline
-            className="w-full h-full object-cover opacity-[0.08]"
+            className="w-full h-full object-cover opacity-[0.18]"
           >
             <source src="/videos/about-hero.mp4" type="video/mp4" />
           </video>
         </div>
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/80 via-[#0a0a0f]/60 to-[#0a0a0f]/80" />
+        {/* Overlay gradient - lighter to show video glow */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0a0a0f]/50 via-[#0a0a0f]/30 to-[#0a0a0f]/50" />
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-amber-500/10" />
         <div className="absolute inset-0 bg-grid opacity-20" />
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-indigo-500/10 rounded-full blur-[150px]" />
