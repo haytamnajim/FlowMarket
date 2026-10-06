@@ -8,6 +8,7 @@ import ScrollProgress from "@/components/ScrollProgress";
 import ToastContainer from "@/components/ToastContainer";
 import CookieBanner from "@/components/CookieBanner";
 import PageTransition from "@/components/PageTransition";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,19 +32,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="fr"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        {/* Global UI layers */}
-        <PageLoader />
-        <ScrollProgress />
-        <ToastContainer />
-        <CookieBanner />
+        <ThemeProvider>
+          {/* Global UI layers */}
+          <PageLoader />
+          <ScrollProgress />
+          <ToastContainer />
+          <CookieBanner />
 
-        <Header />
-        <PageTransition>
-          <div className="flex-1">{children}</div>
-        </PageTransition>
-        <Footer />
+          <Header />
+          <PageTransition>
+            <div className="flex-1">{children}</div>
+          </PageTransition>
+          <Footer />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "/workflows", label: "Workflows" },
@@ -75,8 +76,9 @@ export default function Header() {
             })}
           </nav>
 
-          {/* CTA — Admin + Connexion + S'inscrire + Explorer */}
+          {/* CTA — Admin + Theme Toggle + Connexion + S'inscrire + Explorer */}
           <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
             <Link
               href="/admin"
               className="px-3 py-1.5 text-xs font-semibold text-indigo-400 bg-indigo-500/10 border border-indigo-500/20 rounded-full hover:bg-indigo-500/20 transition-all duration-200 flex items-center gap-1.5"
@@ -156,6 +158,7 @@ export default function Header() {
               );
             })}
             <div className="pt-2 pb-1 px-2 flex flex-col gap-2 border-t border-[#2a2a3a] mt-2">
+              <ThemeToggle />
               <Link
                 href="/login"
                 onClick={() => setIsMenuOpen(false)}
