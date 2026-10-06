@@ -76,6 +76,26 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="bg-[#111118] rounded-3xl border border-[#2a2a3a] p-8 space-y-4">
+              {/* Video illustration */}
+              <div className="relative aspect-video rounded-2xl overflow-hidden border border-[#2a2a3a]">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover opacity-80"
+                  poster="/videos/Data_packets_flowing_through_wor._20261006183221.mp4"
+                >
+                  <source src="/videos/Data_packets_flowing_through_wor._20261006183221.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0f]/60 via-transparent to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 text-center">
+                  <p className="text-white/80 text-sm font-medium">
+                    Flux de données n8n en temps réel
+                  </p>
+                </div>
+              </div>
+
               {[
                 { icon: "check", text: "Chaque workflow est testé en conditions réelles" },
                 { icon: "check", text: "Documentation complète fournie avec chaque achat" },
