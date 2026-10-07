@@ -29,7 +29,7 @@ export default function ContactPage() {
   return (
     <main className="min-h-screen pt-16" id="top">
       {/* Hero - Professional Redesign */}
-      <section className="relative py-24 lg:py-32 overflow-hidden border-b border-[#2a2a3a]">
+      <section className="relative py-24 lg:py-32 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 overflow-hidden z-0">
           <video
