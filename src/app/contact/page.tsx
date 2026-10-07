@@ -31,20 +31,20 @@ export default function ContactPage() {
       {/* Hero - Professional Redesign */}
       <section className="relative py-24 lg:py-32 overflow-hidden border-b border-[#2a2a3a]">
         {/* Video Background */}
-        <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden z-0">
           <video
             autoPlay
             muted
             loop
             playsInline
-            className="w-full h-full object-cover opacity-[0.12]"
+            className="w-full h-full object-cover opacity-[0.18]"
           >
             <source src="/videos/contact-hero.mp4" type="video/mp4" />
           </video>
         </div>
         
-        {/* Background Layers */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#0d0d1a] to-[#0a0a0f]" />
+        {/* Background Layers - semi-transparent to let video show through */}
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0a0a0f]/60 via-[#0d0d1a]/40 to-[#0a0a0f]/60" />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-br from-indigo-500/15 to-transparent rounded-full blur-[200px]" />
         <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-amber-500/15 to-transparent rounded-full blur-[200px]" />
