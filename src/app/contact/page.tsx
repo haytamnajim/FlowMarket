@@ -27,9 +27,9 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen pt-16" id="top">
+    <main className="min-h-screen" id="top">
       {/* Hero - Professional Redesign */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative min-h-[90vh] overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 overflow-hidden z-0">
           <video
@@ -53,7 +53,7 @@ export default function ContactPage() {
         <div className="absolute top-20 left-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-float" />
         <div className="absolute bottom-20 right-10 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '1.5s' }} />
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
           {/* Header Badge */}
           <div className="inline-flex items-center gap-2.5 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-5 py-2.5 mb-8">
             <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
