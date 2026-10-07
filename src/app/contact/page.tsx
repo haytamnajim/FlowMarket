@@ -28,27 +28,76 @@ export default function ContactPage() {
 
   return (
     <main className="min-h-screen pt-16" id="top">
-      {/* Hero */}
-      <section className="relative py-20 overflow-hidden border-b border-[#2a2a3a]">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-amber-500/10" />
-        <div className="absolute inset-0 bg-grid opacity-20" />
-        <div className="absolute top-0 left-1/3 w-96 h-96 bg-indigo-500/10 rounded-full blur-[150px]" />
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-6">
-            <Icon name="mail" className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="text-xs text-gray-400">Contactez-nous</span>
+      {/* Hero - Professional Redesign */}
+      <section className="relative py-24 lg:py-32 overflow-hidden border-b border-[#2a2a3a]">
+        {/* Background Layers */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#0d0d1a] to-[#0a0a0f]" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-br from-indigo-500/15 to-transparent rounded-full blur-[200px]" />
+        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-amber-500/15 to-transparent rounded-full blur-[200px]" />
+        
+        {/* Subtle animated blob */}
+        <div className="absolute top-20 left-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-float" />
+        <div className="absolute bottom-20 right-10 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '1.5s' }} />
+
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Badge */}
+          <div className="inline-flex items-center gap-2.5 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-5 py-2.5 mb-8">
+            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+            <span className="text-xs font-medium text-gray-300 tracking-wide">Disponible 24/7 • Réponse sous 24h</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+
+          {/* Title with gradient */}
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1] max-w-3xl mx-auto">
             Contactez <span className="gradient-text">FlowMarket</span>
           </h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-            Une question, une suggestion ou un projet ? Notre équipe vous répond sous 24h.
+
+          {/* Subtitle */}
+          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Une question technique, un projet d'automatisation ou une suggestion ? 
+            Notre équipe d'experts n8n vous répond personnellement sous 24h ouvrées.
           </p>
+
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-10">
+            <div className="flex items-center gap-2 text-gray-500">
+              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+              <span className="text-sm font-medium text-gray-300">Équipe disponible</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-500">
+              <Icon name="shield" className="w-4 h-4 text-emerald-400" />
+              <span className="text-sm font-medium text-gray-300">Réponse garantie 24h</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-500">
+              <Icon name="star" className="w-4 h-4 text-amber-400" />
+              <span className="text-sm font-medium text-gray-300">4.9/5 satisfaction</span>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link
+              href="#formulaire"
+              className="btn-shine inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-base hover:shadow-xl hover:shadow-indigo-500/30 transition-all"
+            >
+              <Icon name="mail" className="w-5 h-5" />
+              Écrire un message
+            </Link>
+            <Link
+              href="https://discord.gg/flowmarket"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#111118] border border-[#2a2a3a] text-white rounded-xl font-semibold text-base hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all"
+            >
+              <Icon name="discord" className="w-5 h-5" />
+              Rejoindre Discord
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Contact Content */}
-      <section className="py-20">
+      <section id="formulaire" className="py-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
