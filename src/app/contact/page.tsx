@@ -30,6 +30,19 @@ export default function ContactPage() {
     <main className="min-h-screen pt-16" id="top">
       {/* Hero - Professional Redesign */}
       <section className="relative py-24 lg:py-32 overflow-hidden border-b border-[#2a2a3a]">
+        {/* Video Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover opacity-[0.12]"
+          >
+            <source src="/videos/contact-hero.mp4" type="video/mp4" />
+          </video>
+        </div>
+        
         {/* Background Layers */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f] via-[#0d0d1a] to-[#0a0a0f]" />
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
