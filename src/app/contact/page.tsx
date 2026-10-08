@@ -1,12 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Icon from "@/components/Icon";
 
 type TopicType = "project" | "support" | "partnership" | "general";
 
 export default function ContactPage() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
   const [topic, setTopic] = useState<TopicType>("project");
   const [budget, setBudget] = useState<string>("1k-3k");
   const [urgency, setUrgency] = useState<string>("month");
@@ -14,6 +18,23 @@ export default function ContactPage() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [showBookingModal, setShowBookingModal] = useState(false);
+
+  const togglePlay = () => {
+    if (!videoRef.current) return;
+    if (isPlaying) {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const toggleMute = () => {
+    if (!videoRef.current) return;
+    videoRef.current.muted = !isMuted;
+    setIsMuted(!isMuted);
+  };
 
   const [formData, setFormData] = useState({
     name: "",
@@ -106,7 +127,7 @@ export default function ContactPage() {
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 lg:pt-36 pb-24">
         {/* Header / Hero compact */}
         <div className="text-center max-w-3xl mx-auto mb-14">
           {/* Status pill badge */}
@@ -400,6 +421,68 @@ export default function ContactPage() {
 
           {/* RIGHT: Fast Track & Channels (5 cols) */}
           <div className="lg:col-span-5 space-y-5">
+            {/* Video Showcase Card - Studio n8n */}
+            <div className="relative overflow-hidden rounded-3xl bg-[#0e0e17]/90 border border-white/10 shadow-2xl backdrop-blur-xl group hover:border-indigo-500/40 transition-all duration-300">
+              <div className="relative aspect-[16/10] sm:aspect-video w-full overflow-hidden bg-black/60">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  muted={isMuted}
+                  loop
+                  playsInline
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                >
+                  <source src="/videos/contact-hero.mp4" type="video/mp4" />
+                </video>
+
+                {/* Subtle gradient overlays to blend seamlessly */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e17] via-transparent to-black/50 pointer-events-none" />
+                <div className="absolute inset-0 bg-indigo-500/10 mix-blend-color pointer-events-none" />
+
+                {/* Top badges & controls */}
+                <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/65 backdrop-blur-md border border-white/15 text-[11px] font-medium text-white shadow-lg">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Studio FlowMarket • En direct</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={toggleMute}
+                      title={isMuted ? "Activer le son" : "Couper le son"}
+                      className="w-7 h-7 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/15 text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                    >
+                      <Icon name={isMuted ? "volumeX" : "volume"} className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      title={isPlaying ? "Mettre en pause" : "Lire"}
+                      className="w-7 h-7 rounded-full bg-black/60 hover:bg-black/90 backdrop-blur-md border border-white/15 text-white/80 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
+                    >
+                      <Icon name={isPlaying ? "pause" : "play"} className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Bottom Caption inside Video */}
+                <div className="absolute bottom-3 left-4 right-4">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="px-2 py-0.5 rounded-md bg-indigo-500/30 border border-indigo-400/30 text-[10px] font-semibold text-indigo-200">
+                      Coulisses
+                    </span>
+                    <span className="text-xs font-semibold text-white drop-shadow">
+                      Conception & orchestration de flux n8n
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-gray-300/90 drop-shadow line-clamp-1">
+                    Nos experts conçoivent, testent et optimisent vos architectures sur-mesure.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* Direct Booking Card (Calendly / Call) */}
             <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#121220] via-[#0e0e1a] to-[#161226] border border-indigo-500/30 p-6 sm:p-7 shadow-xl group hover:border-indigo-500/50 transition-all">
               <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-[70px] pointer-events-none" />
