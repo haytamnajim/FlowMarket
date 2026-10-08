@@ -2,83 +2,45 @@
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
-type Theme = "light" | "dark" | "system";
+type Theme = "dark";
 
 interface ThemeContextType {
   theme: Theme;
-  resolvedTheme: "light" | "dark";
+  resolvedTheme: "dark";
   setTheme: (theme: Theme) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+  theme: "dark",
+  resolvedTheme: "dark",
+  setTheme: () => {},
+});
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("system");
-  const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem("theme") as Theme | null;
-    if (stored) {
-      setTheme(stored);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    
+    // Enforce dark mode globally
     const root = window.document.documentElement;
-    root.classList.remove("light", "dark");
-
-    let resolved: "light" | "dark";
-    
-    if (theme === "system") {
-      resolved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    } else {
-      resolved = theme;
-    }
-
-    setResolvedTheme(resolved);
-    root.classList.add(resolved);
-    localStorage.setItem("theme", theme);
-  }, [theme, mounted]);
-
-  useEffect(() => {
-    if (!mounted || theme !== "system") return;
-
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      const resolved = mediaQuery.matches ? "dark" : "light";
-      setResolvedTheme(resolved);
-      document.documentElement.classList.remove("light", "dark");
-      document.documentElement.classList.add(resolved);
-    };
-
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, [theme, mounted]);
+    root.classList.remove("light");
+    root.classList.add("dark");
+    try {
+      localStorage.removeItem("theme");
+    } catch {}
+  }, []);
 
   if (!mounted) {
     return <>{children}</>;
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, setTheme }}>
+    <ThemeContext.Provider value={{ theme: "dark", resolvedTheme: "dark", setTheme: () => {} }}>
       {children}
     </ThemeContext.Provider>
   );
 }
 
 export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    // Return default values for SSR/static generation
-    return {
-      theme: "system" as Theme,
-      resolvedTheme: "dark" as "light" | "dark",
-      setTheme: () => {},
-    };
-  }
-  return context;
+  return useContext(ThemeContext);
 }

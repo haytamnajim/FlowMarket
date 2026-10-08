@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
-import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "/workflows", label: "Workflows" },
@@ -99,10 +98,17 @@ export default function Header() {
           </nav>
 
           {/* RIGHT: Actions & CTAs (Adaptive sizing) */}
-          <div className="hidden md:flex items-center gap-2 sm:gap-2.5">
-            <div className={`transition-all duration-300 ${isScrolled ? "scale-90 origin-right" : "scale-100"}`}>
-              <ThemeToggle />
-            </div>
+          <div className="hidden md:flex items-center gap-2.5">
+            <Link
+              href="/admin"
+              className={`font-semibold text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/25 rounded-lg transition-all flex items-center gap-1.5 ${
+                isScrolled ? "px-2 py-1 text-[11px]" : "px-2.5 py-1.5 text-xs"
+              }`}
+              title="Panneau d'administration"
+            >
+              <Icon name="shield" className={isScrolled ? "w-3 h-3 text-indigo-400" : "w-3.5 h-3.5 text-indigo-400"} />
+              <span>Admin</span>
+            </Link>
 
             <div className={`w-px bg-white/10 transition-all ${isScrolled ? "h-3 mx-0.5" : "h-4 mx-1"}`} />
 
@@ -127,9 +133,6 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
-            <div className="scale-90 origin-right">
-              <ThemeToggle />
-            </div>
             <button
               type="button"
               className="p-1.5 sm:p-2 text-gray-400 hover:text-white rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
