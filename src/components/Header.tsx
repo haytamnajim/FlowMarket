@@ -21,48 +21,72 @@ export default function Header() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 15);
+      setIsScrolled(window.scrollY > 25);
     };
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    // Check initial position on mount
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 pointer-events-none pt-3 sm:pt-4 px-4 sm:px-6 lg:px-8 transition-all duration-300">
-      {/* Floating Contained Navigation Bar (Not full screen) */}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 pointer-events-none px-4 sm:px-6 lg:px-8 transition-all duration-300 ease-in-out ${
+        isScrolled ? "pt-2 sm:pt-2.5" : "pt-4 sm:pt-6"
+      }`}
+    >
+      {/* Dynamic Floating Dock with Smooth Shrink on Scroll */}
       <div
-        className={`max-w-6xl mx-auto pointer-events-auto rounded-2xl border transition-all duration-300 ${
+        className={`mx-auto pointer-events-auto border transition-all duration-300 ease-in-out ${
           isScrolled
-            ? "bg-[#090910]/95 border-white/15 shadow-2xl shadow-black/60 backdrop-blur-2xl"
-            : "bg-[#0d0d16]/85 border-white/10 shadow-xl shadow-black/30 backdrop-blur-xl"
+            ? "max-w-5xl h-12 sm:h-13 px-3.5 sm:px-5 rounded-xl sm:rounded-2xl bg-[#080810]/95 border-white/15 shadow-2xl shadow-black/70 backdrop-blur-2xl"
+            : "max-w-6xl h-16 sm:h-18 px-5 sm:px-7 rounded-2xl sm:rounded-3xl bg-[#0d0d16]/85 border-white/10 shadow-xl shadow-black/30 backdrop-blur-xl"
         }`}
       >
-        <div className="h-14 sm:h-16 px-4 sm:px-6 flex items-center justify-between gap-4">
+        <div className="h-full flex items-center justify-between gap-3 sm:gap-4">
           
-          {/* LEFT: Brand Logo */}
+          {/* LEFT: Brand Logo (Scales dynamically) */}
           <div className="flex items-center gap-6">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="relative w-8 h-8 sm:w-9 sm:h-9">
+            <Link href="/" className="flex items-center gap-2 sm:gap-2.5 group">
+              <div
+                className={`relative transition-all duration-300 ease-in-out ${
+                  isScrolled ? "w-7 h-7 sm:w-8 sm:h-8" : "w-8 h-8 sm:w-9 sm:h-9"
+                }`}
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-amber-500 rounded-xl rotate-3 group-hover:rotate-6 transition-transform duration-300" />
                 <div className="absolute inset-0 bg-[#0c0c14] rounded-xl flex items-center justify-center border border-white/10">
-                  <span className="text-sm sm:text-base font-black gradient-text">F</span>
+                  <span
+                    className={`font-black gradient-text transition-all duration-300 ${
+                      isScrolled ? "text-xs sm:text-sm" : "text-sm sm:text-base"
+                    }`}
+                  >
+                    F
+                  </span>
                 </div>
               </div>
-              <span className="text-base sm:text-lg font-bold tracking-tight text-white">
+              <span
+                className={`font-bold tracking-tight text-white transition-all duration-300 ${
+                  isScrolled ? "text-sm sm:text-base" : "text-base sm:text-lg"
+                }`}
+              >
                 Flow<span className="gradient-text">Market</span>
               </span>
             </Link>
           </div>
 
-          {/* CENTER: Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* CENTER: Desktop Navigation Links (Paddings adapt dynamically) */}
+          <nav className="hidden md:flex items-center gap-0.5 lg:gap-1">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`rounded-lg sm:rounded-xl font-medium transition-all duration-200 ${
+                    isScrolled
+                      ? "px-2.5 sm:px-3 py-1 text-xs sm:text-sm"
+                      : "px-3 sm:px-3.5 py-1.5 text-sm"
+                  } ${
                     isActive
                       ? "text-white bg-white/10 font-semibold shadow-inner border border-white/5"
                       : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -74,31 +98,28 @@ export default function Header() {
             })}
           </nav>
 
-          {/* RIGHT: Actions & CTAs */}
-          <div className="hidden md:flex items-center gap-2.5">
-            <ThemeToggle />
+          {/* RIGHT: Actions & CTAs (Adaptive sizing) */}
+          <div className="hidden md:flex items-center gap-2 sm:gap-2.5">
+            <div className={`transition-all duration-300 ${isScrolled ? "scale-90 origin-right" : "scale-100"}`}>
+              <ThemeToggle />
+            </div>
 
-            <Link
-              href="/admin"
-              className="px-2.5 py-1.5 text-xs font-semibold text-indigo-300 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/25 rounded-lg transition-all flex items-center gap-1.5"
-              title="Panneau d'administration"
-            >
-              <Icon name="shield" className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Admin</span>
-            </Link>
-
-            <div className="h-4 w-px bg-white/10 mx-1" />
+            <div className={`w-px bg-white/10 transition-all ${isScrolled ? "h-3 mx-0.5" : "h-4 mx-1"}`} />
 
             <Link
               href="/login"
-              className="px-3 py-1.5 text-sm font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors"
+              className={`font-medium text-gray-300 hover:text-white rounded-lg hover:bg-white/5 transition-colors ${
+                isScrolled ? "px-2.5 py-1 text-xs" : "px-3 py-1.5 text-sm"
+              }`}
             >
               Connexion
             </Link>
 
             <Link
               href="/workflows"
-              className="btn-shine px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-gradient-to-r from-indigo-500 to-amber-500 rounded-xl shadow-md hover:shadow-indigo-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              className={`btn-shine font-semibold text-white bg-gradient-to-r from-indigo-500 to-amber-500 rounded-xl shadow-md hover:shadow-indigo-500/25 hover:scale-[1.02] active:scale-[0.98] transition-all ${
+                isScrolled ? "px-3.5 py-1.5 text-xs" : "px-4 sm:px-5 py-2 text-xs sm:text-sm"
+              }`}
             >
               Explorer
             </Link>
@@ -106,10 +127,12 @@ export default function Header() {
 
           {/* Mobile Menu Button */}
           <div className="flex md:hidden items-center gap-2">
-            <ThemeToggle />
+            <div className="scale-90 origin-right">
+              <ThemeToggle />
+            </div>
             <button
               type="button"
-              className="p-2 text-gray-400 hover:text-white rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+              className="p-1.5 sm:p-2 text-gray-400 hover:text-white rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Ouvrir le menu"
             >
