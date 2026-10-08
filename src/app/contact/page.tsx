@@ -4,398 +4,668 @@ import Link from "next/link";
 import { useState } from "react";
 import Icon from "@/components/Icon";
 
+type TopicType = "project" | "support" | "partnership" | "general";
+
 export default function ContactPage() {
+  const [topic, setTopic] = useState<TopicType>("project");
+  const [budget, setBudget] = useState<string>("1k-3k");
+  const [urgency, setUrgency] = useState<string>("month");
+  const [attachedFile, setAttachedFile] = useState<string | null>(null);
+  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
+    company: "",
     message: "",
   });
+
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+
+  const topics: { id: TopicType; label: string; icon: string; desc: string }[] = [
+    {
+      id: "project",
+      label: "Projet sur-mesure",
+      icon: "rocket",
+      desc: "Automatisation ou flux complet pour votre entreprise",
+    },
+    {
+      id: "support",
+      label: "Support technique",
+      icon: "bolt",
+      desc: "Aide sur un template acheté ou un nœud n8n",
+    },
+    {
+      id: "partnership",
+      label: "Partenariat / Affiliation",
+      icon: "users",
+      desc: "Créateurs de workflows & intégrations d'outils",
+    },
+    {
+      id: "general",
+      label: "Autre demande",
+      icon: "messageSquare",
+      desc: "Questions générales, presse, suggestions",
+    },
+  ];
+
+  const handleCopyEmail = () => {
+    navigator.clipboard.writeText("contact@flowmarket.fr");
+    setCopiedEmail(true);
+    setTimeout(() => setCopiedEmail(false), 2500);
+  };
+
+  const handleFakeFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setAttachedFile(e.target.files[0].name);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    await new Promise((r) => setTimeout(r, 1000)); // Simulate API call
+    await new Promise((r) => setTimeout(r, 1200)); // Simulation envoi
     setStatus("success");
-    setFormData({ name: "", email: "", subject: "", message: "" });
-    setTimeout(() => setStatus("idle"), 4000);
+    setFormData({ name: "", email: "", company: "", message: "" });
+    setAttachedFile(null);
+    setTimeout(() => setStatus("idle"), 5000);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
+  const faqs = [
+    {
+      q: "Sous quel délai puis-je espérer une réponse ?",
+      a: "Nous répondons à tous les messages sous 24h ouvrées (et en moyenne en moins de 2 heures en semaine). Pour les clients avec support prioritaire, le délai garanti est inférieur à 4h.",
+    },
+    {
+      q: "Comment se déroule la création d'un workflow n8n sur-mesure ?",
+      a: "Après analyse de votre besoin, nous convenons d'un bref appel de cadrage de 15 minutes. Vous recevez un devis clair sous 48h. Une fois validé, nous livrons votre scénario testé, documenté et prêt à l'emploi.",
+    },
+    {
+      q: "Aidez-vous à l'hébergement ou à l'installation de n8n ?",
+      a: "Absolument. Nous accompagnons le déploiement de n8n aussi bien sur n8n Cloud que sur vos serveurs privés (Docker, VPS Hetzner, AWS, Render, Railway) avec sécurisation des clés d'API.",
+    },
+    {
+      q: "Puis-je signer un accord de confidentialité (NDA) ?",
+      a: "Oui, la confidentialité de vos données et processus métiers est primordiale. Nous pouvons signer votre NDA ou vous fournir notre modèle standard avant d'accéder à vos environnements.",
+    },
+    {
+      q: "Que faire si un template acheté nécessite une adaptation ?",
+      a: "Chaque template inclut un guide pas-à-pas. Si vous rencontrez un blocage ou souhaitez connecter un outil supplémentaire, notre équipe support vous assiste ou prend en charge l'extension.",
+    },
+  ];
 
   return (
-    <main className="min-h-screen" id="top">
-      {/* Hero - Professional Redesign */}
-      <section className="relative min-h-[90vh] overflow-hidden">
-        {/* Video Background */}
-        <div className="absolute inset-0 overflow-hidden z-0">
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover opacity-[0.30]"
-          >
-            <source src="/videos/contact-hero.mp4" type="video/mp4" />
-          </video>
-        </div>
-        
-        {/* Background Layers - semi-transparent to let video show through */}
-        <div className="absolute inset-0 z-10 bg-gradient-to-b from-[#0a0a0f]/40 via-[#0d0d1a]/20 to-[#0a0a0f]/40" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-gradient-to-br from-indigo-500/15 to-transparent rounded-full blur-[200px]" />
-        <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-gradient-to-bl from-amber-500/15 to-transparent rounded-full blur-[200px]" />
-        
-        {/* Subtle animated blob */}
-        <div className="absolute top-20 left-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-[100px] animate-float" />
-        <div className="absolute bottom-20 right-10 w-64 h-64 bg-amber-500/10 rounded-full blur-[100px] animate-float" style={{ animationDelay: '1.5s' }} />
+    <main className="min-h-screen bg-[#07070b] text-gray-200 selection:bg-indigo-500/30 selection:text-indigo-200">
+      {/* Background Gradients & Glows */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-indigo-600/15 via-purple-600/10 to-transparent rounded-full blur-[160px]" />
+        <div className="absolute top-[40%] -right-40 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[180px]" />
+        <div className="absolute bottom-10 -left-40 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[180px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
+      </div>
 
-        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24">
-          {/* Header Badge */}
-          <div className="inline-flex items-center gap-2.5 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-5 py-2.5 mb-8">
-            <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-            <span className="text-xs font-medium text-gray-300 tracking-wide">Disponible 24/7 • Réponse sous 24h</span>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24">
+        {/* Header / Hero compact */}
+        <div className="text-center max-w-3xl mx-auto mb-14">
+          {/* Status pill badge */}
+          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#12121b]/90 border border-white/10 shadow-lg backdrop-blur-md mb-6">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-medium text-gray-300">
+              Experts disponibles • Réponse moyenne <strong className="text-emerald-400 font-semibold">&lt; 1h</strong>
+            </span>
           </div>
 
-          {/* Title with gradient */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-6 leading-[1.1] max-w-3xl mx-auto">
-            Contactez <span className="gradient-text">FlowMarket</span>
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-5 leading-[1.15]">
+            Parlons de vos automatisations <span className="gradient-text">n8n</span>
           </h1>
-
-          {/* Subtitle */}
-          <p className="text-lg sm:text-xl text-gray-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-            Une question technique, un projet d'automatisation ou une suggestion ? 
-            Notre équipe d'experts n8n vous répond personnellement sous 24h ouvrées.
+          <p className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
+            Un projet d'automatisation sur-mesure, une question technique ou une demande de partenariat ?
+            Échangez directement avec nos ingénieurs.
           </p>
-
-          {/* Trust Indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-10">
-            <div className="flex items-center gap-2 text-gray-500">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-gray-300">Équipe disponible</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500">
-              <Icon name="shield" className="w-4 h-4 text-emerald-400" />
-              <span className="text-sm font-medium text-gray-300">Réponse garantie 24h</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-500">
-              <Icon name="star" className="w-4 h-4 text-amber-400" />
-              <span className="text-sm font-medium text-gray-300">4.9/5 satisfaction</span>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              href="#formulaire"
-              className="btn-shine inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-base hover:shadow-xl hover:shadow-indigo-500/30 transition-all"
-            >
-              <Icon name="mail" className="w-5 h-5" />
-              Écrire un message
-            </Link>
-            <Link
-              href="https://discord.gg/flowmarket"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#111118] border border-[#2a2a3a] text-white rounded-xl font-semibold text-base hover:border-indigo-500/50 hover:bg-indigo-500/10 transition-all"
-            >
-              <Icon name="discord" className="w-5 h-5" />
-              Rejoindre Discord
-            </Link>
-          </div>
         </div>
-      </section>
 
-      {/* Contact Content */}
-      <section id="formulaire" className="py-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Contact Form */}
-            <div className="bg-gradient-to-br from-[#111118] to-[#0f0f18] rounded-3xl border border-[#2a2a3a] p-8 lg:p-10 relative overflow-hidden">
-              {/* Decorative accent */}
-              <div className="absolute top-0 right-0 w-72 h-72 bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-full blur-[150px]" />
-              
-              <div className="relative z-10">
-                <div className="flex items-center gap-2.5 mb-8">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-amber-500 flex items-center justify-center">
-                    <Icon name="mail" className="w-5 h-5 text-white" />
+        {/* Main Grid: Form + Fast Track Sidebar */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-24">
+          
+          {/* LEFT: Interactive Modern Form (7 cols) */}
+          <div className="lg:col-span-7 bg-[#0e0e17]/85 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+            {/* Subtle card glow */}
+            <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+            <div className="relative z-10">
+              <div className="mb-8">
+                <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-2">
+                  Étape 1 sur 2
+                </span>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                  Quel est l'objet de votre demande ?
+                </h2>
+                <p className="text-xs sm:text-sm text-gray-400">
+                  Sélectionnez la catégorie qui décrit le mieux votre besoin :
+                </p>
+
+                {/* Topic selector pills */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                  {topics.map((t) => {
+                    const isSelected = topic === t.id;
+                    return (
+                      <button
+                        key={t.id}
+                        type="button"
+                        onClick={() => setTopic(t.id)}
+                        className={`text-left p-3.5 rounded-2xl border transition-all duration-200 flex items-start gap-3 ${
+                          isSelected
+                            ? "bg-indigo-600/15 border-indigo-500 shadow-md shadow-indigo-500/20 ring-1 ring-indigo-500/50"
+                            : "bg-[#141420]/70 border-white/5 hover:border-white/20 hover:bg-[#181826]"
+                        }`}
+                      >
+                        <div
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+                            isSelected
+                              ? "bg-gradient-to-br from-indigo-500 to-amber-500 text-white shadow"
+                              : "bg-[#1f1f2e] text-gray-400"
+                          }`}
+                        >
+                          <Icon name={t.icon} className="w-4 h-4" />
+                        </div>
+                        <div>
+                          <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-300"}`}>
+                            {t.label}
+                          </p>
+                          <p className="text-[11px] text-gray-400 leading-snug line-clamp-1 mt-0.5">
+                            {t.desc}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Conditional context for "project" */}
+              {topic === "project" && (
+                <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-[#141422]/70 border border-indigo-500/20 animate-in fade-in duration-300">
+                  <div className="mb-4">
+                    <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
+                      Budget estimé pour ce projet
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        { id: "<1k", label: "< 1 000 €" },
+                        { id: "1k-3k", label: "1k - 3k €" },
+                        { id: "3k-5k", label: "3k - 5k €" },
+                        { id: ">5k", label: "5k € +" },
+                      ].map((b) => (
+                        <button
+                          key={b.id}
+                          type="button"
+                          onClick={() => setBudget(b.id)}
+                          className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${
+                            budget === b.id
+                              ? "bg-gradient-to-r from-indigo-500 to-indigo-600 border-indigo-400 text-white shadow-sm"
+                              : "bg-[#181828] border-white/5 text-gray-400 hover:text-white hover:border-white/20"
+                          }`}
+                        >
+                          {b.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+
                   <div>
-                    <h2 className="text-2xl font-bold text-white">Envoyez-nous un message</h2>
-                    <p className="text-gray-500 text-sm mt-1">Réponse garantie sous 24h ouvrées</p>
+                    <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
+                      Échéance souhaitée
+                    </label>
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { id: "urgent", label: "Urgent (< 1 sem)" },
+                        { id: "month", label: "Ce mois-ci" },
+                        { id: "flexible", label: "Exploration" },
+                      ].map((u) => (
+                        <button
+                          key={u.id}
+                          type="button"
+                          onClick={() => setUrgency(u.id)}
+                          className={`py-2 px-2 text-xs font-medium rounded-xl border text-center transition-all truncate ${
+                            urgency === u.id
+                              ? "bg-amber-500/20 border-amber-500/60 text-amber-300 font-semibold"
+                              : "bg-[#181828] border-white/5 text-gray-400 hover:text-white hover:border-white/20"
+                          }`}
+                        >
+                          {u.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
+              )}
 
-                {status === "success" && (
-                  <div className="mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center gap-3 animate-in slide-in-from-top-4 duration-300">
-                    <Icon name="check" className="w-5 h-5 flex-shrink-0" />
-                    <div>
-                      <p className="font-semibold">Message envoyé !</p>
-                      <p className="text-sm text-emerald-500/80">Nous vous répondrons dans les plus brefs délais.</p>
-                    </div>
+              {/* Status Message */}
+              {status === "success" && (
+                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 flex items-center gap-3 animate-in zoom-in-95 duration-300 shadow-lg">
+                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                    <Icon name="check" className="w-5 h-5 text-emerald-400" />
                   </div>
-                )}
-
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div className="relative group">
-                      <label htmlFor="name" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                        Prénom
-                      </label>
-                      <div className="relative">
-                        <Icon name="user" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          required
-                          className="w-full pl-12 pr-4 py-3.5 bg-[#080812] border border-[#2a2a3a] rounded-xl text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500/60 focus:bg-[#0c0c18] focus:ring-1 focus:ring-indigo-500/15 transition-all"
-                          placeholder="Votre prénom"
-                        />
-                      </div>
-                    </div>
-                    <div className="relative group">
-                      <label htmlFor="email" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                        Email
-                      </label>
-                      <div className="relative">
-                        <Icon name="mail" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleChange}
-                          required
-                          className="w-full pl-12 pr-4 py-3.5 bg-[#080812] border border-[#2a2a3a] rounded-xl text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500/60 focus:bg-[#0c0c18] focus:ring-1 focus:ring-indigo-500/15 transition-all"
-                          placeholder="votre@email.com"
-                        />
-                      </div>
-                    </div>
+                  <div>
+                    <p className="font-bold text-sm text-emerald-200">Message envoyé avec succès !</p>
+                    <p className="text-xs text-emerald-400/90 mt-0.5">
+                      Un accusé de réception a été envoyé. Notre équipe vous répondra très rapidement.
+                    </p>
                   </div>
+                </div>
+              )}
 
-                  <div className="relative group">
-                    <label htmlFor="subject" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                      Sujet
+              {/* Form inputs */}
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider block">
+                  Étape 2 sur 2 • Vos coordonnées
+                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="name" className="block text-xs font-medium text-gray-300 mb-1.5">
+                      Nom complet <span className="text-rose-400">*</span>
                     </label>
                     <div className="relative">
-                      <Icon name="tag" className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                      <select
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
+                      <Icon name="user" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="text"
+                        id="name"
                         required
-                        className="w-full pl-12 pr-12 py-3.5 bg-[#080812] border border-[#2a2a3a] rounded-xl text-sm text-white focus:outline-none focus:border-indigo-500/60 focus:bg-[#0c0c18] focus:ring-1 focus:ring-indigo-500/15 transition-all appearance-none cursor-pointer"
-                      >
-                        <option value="">Sélectionnez un sujet</option>
-                        <option value="support">🛠 Support technique</option>
-                        <option value="sales">🤝 Ventes / Partenariats</option>
-                        <option value="billing">💳 Facturation / Remboursement</option>
-                        <option value="bug">🐛 Signaler un bug</option>
-                        <option value="feature">✨ Demande de fonctionnalité</option>
-                        <option value="other">📝 Autre</option>
-                      </select>
-                      <Icon name="chevron-down" className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500 pointer-events-none" />
-                    </div>
-                  </div>
-
-                  <div className="relative group">
-                    <label htmlFor="message" className="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-                      Message
-                    </label>
-                    <div className="relative">
-                      <Icon name="messageSquare" className="absolute left-4 top-4 w-5 h-5 text-gray-500 group-focus-within:text-indigo-400 transition-colors" />
-                      <textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
-                        rows={5}
-                        className="w-full pl-12 pr-4 py-3.5 bg-[#080812] border border-[#2a2a3a] rounded-xl text-sm text-white placeholder-gray-600 focus:outline-none focus:border-indigo-500/60 focus:bg-[#0c0c18] focus:ring-1 focus:ring-indigo-500/15 transition-all resize-none"
-                        placeholder="Décrivez votre demande, vos besoins, vos contraintes..."
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Alexandre Dupont"
+                        className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                       />
                     </div>
                   </div>
 
+                  <div>
+                    <label htmlFor="email" className="block text-xs font-medium text-gray-300 mb-1.5">
+                      Adresse email pro <span className="text-rose-400">*</span>
+                    </label>
+                    <div className="relative">
+                      <Icon name="mail" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                      <input
+                        type="email"
+                        id="email"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="alex@entreprise.com"
+                        className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="company" className="block text-xs font-medium text-gray-300 mb-1.5">
+                    Entreprise / Organisation <span className="text-gray-500 text-[11px] font-normal">(Optionnel)</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="company"
+                    value={formData.company}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    placeholder="Acme Corp"
+                    className="w-full px-4 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="block text-xs font-medium text-gray-300 mb-1.5">
+                    Détails de votre message <span className="text-rose-400">*</span>
+                  </label>
+                  <div className="relative">
+                    <textarea
+                      id="message"
+                      required
+                      rows={4}
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      placeholder={
+                        topic === "project"
+                          ? "Décrivez le processus que vous souhaitez automatiser, vos outils (Airtable, Slack, CRM...) et vos objectifs..."
+                          : topic === "support"
+                          ? "Indiquez le nom du template ou le problème rencontré, message d'erreur éventuel..."
+                          : "Expliquez-nous votre proposition ou posez votre question..."
+                      }
+                      className="w-full p-4 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* File attachment toggle */}
+                <div className="flex items-center justify-between p-3 rounded-xl bg-[#141420]/60 border border-white/5">
+                  <div className="flex items-center gap-2.5">
+                    <Icon name="paperclip" className="w-4 h-4 text-indigo-400" />
+                    <span className="text-xs text-gray-300 truncate max-w-[220px] sm:max-w-xs">
+                      {attachedFile ? (
+                        <span className="text-emerald-400 font-semibold">{attachedFile}</span>
+                      ) : (
+                        "Joindre un fichier (workflow JSON, capture d'écran, doc...)"
+                      )}
+                    </span>
+                  </div>
+                  <label className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-colors">
+                    {attachedFile ? "Changer" : "Parcourir"}
+                    <input
+                      type="file"
+                      onChange={handleFakeFileUpload}
+                      className="hidden"
+                      accept=".json,.png,.jpg,.jpeg,.pdf,.zip"
+                    />
+                  </label>
+                </div>
+
+                {/* Submit button */}
+                <button
+                  type="submit"
+                  disabled={status === "submitting"}
+                  className="w-full btn-shine py-4 px-6 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-indigo-500 via-indigo-600 to-amber-500 hover:shadow-xl hover:shadow-indigo-500/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {status === "submitting" ? (
+                    <>
+                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      <span>Transmission en cours...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="send" className="w-4 h-4" />
+                      <span>Envoyer ma demande</span>
+                    </>
+                  )}
+                </button>
+
+                <div className="flex items-center justify-center gap-4 text-xs text-gray-500 pt-1">
+                  <span className="flex items-center gap-1.5">
+                    <Icon name="shield" className="w-3.5 h-3.5 text-emerald-400" />
+                    Données 100% sécurisées
+                  </span>
+                  <span>•</span>
+                  <span className="flex items-center gap-1.5">
+                    <Icon name="lock" className="w-3.5 h-3.5 text-indigo-400" />
+                    Aucun démarchage commercial
+                  </span>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          {/* RIGHT: Fast Track & Channels (5 cols) */}
+          <div className="lg:col-span-5 space-y-5">
+            {/* Direct Booking Card (Calendly / Call) */}
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#121220] via-[#0e0e1a] to-[#161226] border border-indigo-500/30 p-6 sm:p-7 shadow-xl group hover:border-indigo-500/50 transition-all">
+              <div className="absolute top-0 right-0 w-44 h-44 bg-gradient-to-bl from-indigo-500/20 to-transparent rounded-full blur-[70px] pointer-events-none" />
+
+              <div className="relative z-10">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/15 border border-indigo-500/30 text-indigo-300 text-xs font-semibold mb-4">
+                  <Icon name="calendar" className="w-3.5 h-3.5" />
+                  Prise de contact express
+                </div>
+
+                <h3 className="text-xl font-bold text-white mb-2">
+                  Réserver un appel de cadrage
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-400 mb-6 leading-relaxed">
+                  15 minutes en visio avec un architecte d'automatisation FlowMarket pour cadrer votre flux n8n et obtenir des conseils immédiats.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={() => setShowBookingModal(true)}
+                  className="w-full py-3.5 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs sm:text-sm shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Icon name="calendar" className="w-4 h-4" />
+                  Choisir un créneau (15 min)
+                </button>
+              </div>
+            </div>
+
+            {/* Direct Email Card with 1-click Copy */}
+            <div className="rounded-3xl bg-[#0e0e17]/80 border border-white/10 p-6 backdrop-blur-xl relative overflow-hidden">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400">
+                    <Icon name="mail" className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white">Email direct</h4>
+                    <p className="text-xs text-gray-400">Pour tout document ou devis</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between gap-2 p-3 rounded-xl bg-[#141420] border border-white/5 mt-3">
+                <span className="text-xs sm:text-sm font-mono text-gray-300 truncate">
+                  contact@flowmarket.fr
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 text-indigo-300 text-xs font-medium transition-all cursor-pointer"
+                >
+                  {copiedEmail ? (
+                    <>
+                      <Icon name="check" className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-400 font-bold">Copié !</span>
+                    </>
+                  ) : (
+                    <>
+                      <Icon name="copy" className="w-3.5 h-3.5" />
+                      <span>Copier</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Community Discord Card */}
+            <div className="rounded-3xl bg-[#0e0e17]/80 border border-white/10 p-6 backdrop-blur-xl relative overflow-hidden group hover:border-[#5865F2]/40 transition-all">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-[#5865F2]/20 border border-[#5865F2]/30 flex items-center justify-center text-[#5865F2]">
+                    <Icon name="discord" className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">
+                      Communauté Discord
+                    </h4>
+                    <p className="text-xs text-gray-400">Support communautaire & entraide n8n</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 mt-4 pt-3 border-t border-white/5">
+                <div className="flex items-center gap-1.5 text-xs text-gray-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                  <span>+180 en ligne</span>
+                </div>
+                <span className="text-gray-600">•</span>
+                <div className="text-xs text-gray-400">+1 200 automatiseurs</div>
+              </div>
+
+              <Link
+                href="https://discord.gg/flowmarket"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 w-full py-2.5 px-4 rounded-xl bg-[#5865F2]/15 hover:bg-[#5865F2]/25 border border-[#5865F2]/30 text-[#858eff] font-semibold text-xs flex items-center justify-center gap-2 transition-all"
+              >
+                <span>Rejoindre le serveur</span>
+                <Icon name="arrowRight" className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+
+            {/* Practical info badges (Horaires, localisation) */}
+            <div className="rounded-3xl bg-[#0e0e17]/60 border border-white/10 p-5 backdrop-blur-md space-y-3.5">
+              <div className="flex items-center gap-3 text-xs text-gray-300">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                  <Icon name="clock" className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-white">Disponibilité de l'équipe</p>
+                  <p className="text-gray-400 text-[11px]">Du Lundi au Vendredi • 9h00 - 18h30 (Heure de Paris)</p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 text-xs text-gray-300">
+                <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 flex-shrink-0">
+                  <Icon name="mapPin" className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="font-semibold text-white">Siège & R&amp;D</p>
+                  <p className="text-gray-400 text-[11px]">Paris, France • Rayonnement Francophone & International</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ Accordion Section */}
+        <section className="max-w-4xl mx-auto mt-8">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
+              <Icon name="helpCircle" className="w-3.5 h-3.5" />
+              Foire aux questions
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+              Questions fréquentes
+            </h2>
+            <p className="text-sm text-gray-400">
+              Des réponses claires à vos interrogations avant de nous contacter.
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            {faqs.map((faq, index) => {
+              const isOpen = openFaq === index;
+              return (
+                <div
+                  key={index}
+                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                    isOpen
+                      ? "bg-[#10101b] border-indigo-500/40 shadow-lg"
+                      : "bg-[#0c0c14] border-white/5 hover:border-white/15"
+                  }`}
+                >
                   <button
-                    type="submit"
-                    disabled={status === "submitting"}
-                    className="w-full btn-shine px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-amber-500 text-white font-bold text-base hover:shadow-xl hover:shadow-indigo-500/30 transition-all disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? null : index)}
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
                   >
-                    {status === "submitting" ? (
-                      <>
-                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Envoi en cours...
-                      </>
-                    ) : (
-                      <>
-                        <Icon name="send" className="w-5 h-5" />
-                        Envoyer le message
-                      </>
-                    )}
+                    <span className="font-semibold text-sm sm:text-base text-gray-200">
+                      {faq.q}
+                    </span>
+                    <div
+                      className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-200 flex-shrink-0 ${
+                        isOpen ? "bg-indigo-500 text-white rotate-180" : "bg-white/5 text-gray-400"
+                      }`}
+                    >
+                      <Icon name="chevronDown" className="w-4 h-4" />
+                    </div>
                   </button>
-                </form>
-              </div>
-            </div>
-
-            {/* Contact Info & Quick Links - Modern Card Layout */}
-            <div className="space-y-6">
-              {/* Contact Info Cards */}
-              <div className="bg-gradient-to-br from-[#111118] to-[#0f0f18] rounded-3xl border border-[#2a2a3a] p-6 lg:p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-transparent rounded-full blur-[150px]" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2.5 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-                      <Icon name="info" className="w-5 h-5 text-white" />
+                  {isOpen && (
+                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-gray-400 leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
+                      {faq.a}
                     </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-white">Nous contacter</h2>
-                      <p className="text-gray-500 text-sm">Plusieurs canaux à votre disposition</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {[
-                      {
-                        icon: "mail",
-                        title: "Email",
-                        value: "contact@flowmarket.fr",
-                        desc: "Réponse sous 24h ouvrées",
-                        color: "indigo",
-                        bg: "bg-indigo-500/15 border-indigo-500/20",
-                        iconColor: "text-indigo-400",
-                      },
-                      {
-                        icon: "clock",
-                        title: "Horaires",
-                        value: "Lun - Ven : 9h - 18h",
-                        desc: "Fuseau horaire : Europe/Paris",
-                        color: "emerald",
-                        bg: "bg-emerald-500/15 border-emerald-500/20",
-                        iconColor: "text-emerald-400",
-                      },
-                      {
-                        icon: "mapPin",
-                        title: "Adresse",
-                        value: "12 Rue de la Paix, 75002 Paris",
-                        desc: "Siège social",
-                        color: "amber",
-                        bg: "bg-amber-500/15 border-amber-500/20",
-                        iconColor: "text-amber-400",
-                      },
-                      {
-                        icon: "shield",
-                        title: "Support Premium",
-                        value: "Clients premium",
-                        desc: "Réponse garantie sous 4h",
-                        color: "rose",
-                        bg: "bg-rose-500/15 border-rose-500/20",
-                        iconColor: "text-rose-400",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.title}
-                        className="group p-5 rounded-2xl bg-[#0a0a0f]/50 border border-[#2a2a3a] hover:border-indigo-500/30 hover:bg-[#0d0d18]/50 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/10"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className={`w-11 h-11 rounded-xl ${item.bg} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                            <Icon name={item.icon} className={`w-5 h-5 ${item.iconColor}`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <h3 className="text-white font-semibold mb-0.5 group-hover:text-indigo-300 transition-colors">{item.title}</h3>
-                            <p className="text-gray-300 text-sm font-medium mb-1">{item.value}</p>
-                            <p className="text-gray-500 text-xs">{item.desc}</p>
-                          </div>
-                          <Icon name="arrowRight" className="w-4 h-4 text-gray-600 group-hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  )}
                 </div>
-              </div>
+              );
+            })}
+          </div>
+        </section>
 
-              {/* Quick Actions - Modern Card Grid */}
-              <div className="bg-gradient-to-br from-[#111118] to-[#0f0f18] rounded-3xl border border-[#2a2a3a] p-6 lg:p-8 relative overflow-hidden">
-                <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tr from-indigo-500/10 to-transparent rounded-full blur-[150px]" />
-                
-                <div className="relative z-10">
-                  <div className="flex items-center gap-2.5 mb-6">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                      <Icon name="zap" className="w-5 h-5 text-white" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold text-white">Besoin d'aide rapide ?</h2>
-                      <p className="text-gray-500 text-sm">Ressources en accès libre</p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {[
-                      { href: "/faq", label: "FAQ", desc: "Questions fréquentes", icon: "helpCircle", color: "indigo" },
-                      { href: "/docs", label: "Documentation", desc: "Guides et tutoriels n8n", icon: "bookOpen", color: "emerald" },
-                      { href: "/community", label: "Communauté", desc: "Discord & Forum", icon: "users", color: "amber" },
-                      { href: "/changelog", label: "Changelog", desc: "Nouveautés & mises à jour", icon: "sparkles", color: "rose" },
-                    ].map((item) => (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        className="group p-4 rounded-2xl bg-[#0a0a0f]/50 border border-[#2a2a3a] hover:border-indigo-500/40 hover:bg-[#0d0d18]/50 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/10 flex items-center gap-4"
-                      >
-                        <div className={`w-10 h-10 rounded-xl bg-${item.color}-500/15 border border-${item.color}-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
-                          <Icon name={item.icon} className={`w-4 h-4 text-${item.color}-400`} />
-                        </div>
-                        <div className="flex-1 text-left min-w-0">
-                          <p className="text-white font-semibold text-sm group-hover:text-indigo-300 transition-colors">{item.label}</p>
-                          <p className="text-gray-500 text-xs truncate">{item.desc}</p>
-                        </div>
-                        <Icon name="arrowRight" className="w-4 h-4 text-gray-600 group-hover:text-indigo-400 transition-colors opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
+        {/* Bottom CTA Banner */}
+        <div className="mt-20 rounded-3xl bg-gradient-to-r from-indigo-950/60 via-[#111122] to-amber-950/40 border border-white/10 p-8 sm:p-12 text-center relative overflow-hidden">
+          <div className="relative z-10 max-w-2xl mx-auto">
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+              Besoin de modèles prêts à l'emploi dès maintenant ?
+            </h3>
+            <p className="text-sm text-gray-400 mb-6">
+              Découvrez notre catalogue de plus de 50 workflows n8n testés, documentés et prêts à être importés dans votre instance.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Link
+                href="/workflows"
+                className="btn-shine px-6 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-500 to-amber-500 text-white shadow-lg hover:shadow-indigo-500/30 transition-all inline-flex items-center gap-2"
+              >
+                <Icon name="bolt" className="w-4 h-4" />
+                Explorer la boutique de workflows
+              </Link>
+              <Link
+                href="/categories"
+                className="px-6 py-3.5 rounded-xl font-semibold text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all inline-flex items-center gap-2"
+              >
+                Parcourir les catégories
+              </Link>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* CTA */}
-      <section className="py-20 bg-[#0a0a0f] border-t border-[#2a2a3a]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Vous préférez discuter en direct ?
-          </h2>
-          <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-            Rejoignez notre communauté Discord pour échanger avec l'équipe et d'autres automatiseurs.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="https://discord.gg/flowmarket"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-shine inline-flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-500 to-amber-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-lg hover:shadow-indigo-500/25 transition-all"
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
+          <div className="bg-[#11111c] border border-indigo-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+            <button
+              onClick={() => setShowBookingModal(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
             >
-              <Icon name="discord" className="w-5 h-5" />
-              Rejoindre le Discord
-            </Link>
-            <Link
-              href="/workflows"
-              className="inline-flex items-center justify-center gap-2 bg-[#111118] border border-[#2a2a3a] text-white px-8 py-4 rounded-xl font-semibold text-lg hover:border-indigo-500/50 transition-all"
-            >
-              <Icon name="bolt" className="w-5 h-5" />
-              Explorer les workflows
-            </Link>
+              <Icon name="x" className="w-4 h-4" />
+            </button>
+
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 mb-4">
+              <Icon name="calendar" className="w-6 h-6" />
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-2">
+              Appel de cadrage n8n (15 min)
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-400 mb-6 leading-relaxed">
+              Discutez de votre projet en direct avec l'un de nos spécialistes techniques. Choisissez une date qui vous convient :
+            </p>
+
+            <div className="space-y-2.5 mb-6">
+              {[
+                { time: "Aujourd'hui à 15h30", state: "Dernière dispo" },
+                { time: "Demain à 10h00", state: "Recommandé" },
+                { time: "Demain à 14h30", state: "Disponible" },
+                { time: "Jeudi à 11h00", state: "Disponible" },
+              ].map((slot, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => {
+                    alert(`Créneau réservé : ${slot.time} ! Un lien Google Meet vous a été envoyé.`);
+                    setShowBookingModal(false);
+                  }}
+                  className="w-full p-3 rounded-xl bg-[#161624] hover:bg-indigo-600/20 border border-white/5 hover:border-indigo-500/50 flex items-center justify-between text-left transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Icon name="clock" className="w-4 h-4 text-indigo-400 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs sm:text-sm font-semibold text-gray-200 group-hover:text-white">
+                      {slot.time}
+                    </span>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
+                    {slot.state}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <p className="text-[11px] text-gray-500 text-center">
+              Sans engagement • Lien visio Google Meet généré automatiquement
+            </p>
           </div>
         </div>
-      </section>
+      )}
     </main>
   );
 }
