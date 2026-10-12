@@ -9,6 +9,7 @@ import ToastContainer from "@/components/ToastContainer";
 import CookieBanner from "@/components/CookieBanner";
 import PageTransition from "@/components/PageTransition";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { LanguageProvider } from "@/components/LanguageProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,17 +37,19 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          {/* Global UI layers */}
-          <PageLoader />
-          <ScrollProgress />
-          <ToastContainer />
-          <CookieBanner />
+          <LanguageProvider>
+            {/* Global UI layers */}
+            <PageLoader />
+            <ScrollProgress />
+            <ToastContainer />
+            <CookieBanner />
 
-          <Header />
-          <PageTransition>
-            <div className="flex-1">{children}</div>
-          </PageTransition>
-          <Footer />
+            <Header />
+            <PageTransition>
+              <div className="flex-1">{children}</div>
+            </PageTransition>
+            <Footer />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -19,21 +19,11 @@ export default function Home() {
     <>
       <main>
         {/* Hero Section */}
-        <section className="relative min-h-[100vh] overflow-hidden">
+        <section className="relative overflow-hidden flex flex-col justify-center">
           <HeroBackground />
           <InteractiveParticles count={60} />
-          {/* Hero video background */}
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.06] pointer-events-none"
-          >
-            <source src="/videos/hero-workflow.mp4" type="video/mp4" />
-          </video>
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 pt-24 z-10">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-12 sm:pb-16 z-10">
             <div className="text-center max-w-5xl mx-auto">
               {/* Badge */}
               <div className="inline-flex items-center gap-2 bg-[#111118]/80 backdrop-blur border border-[#2a2a3a] rounded-full px-4 py-2 mb-6">
@@ -117,8 +107,8 @@ export default function Home() {
       </section>
 
       {/* Categories */}
-        <FadeIn direction="up">
-        <section className="py-24 relative">
+      <FadeIn direction="up">
+        <section className="pt-10 pb-20 relative">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-indigo-500/5 to-transparent" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">

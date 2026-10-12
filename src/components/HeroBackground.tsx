@@ -24,7 +24,7 @@ export default function HeroBackground() {
       </div>
 
       {/* Overlay gradients */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f]/70 via-[#0a0a0f]/50 to-[#0a0a0f]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0a0a0f]/60 via-[#0a0a0f]/30 to-[#0a0a0f]" />
       <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-transparent to-amber-500/10" />
 
       {/* Grid pattern */}

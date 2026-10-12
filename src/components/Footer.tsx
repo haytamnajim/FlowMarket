@@ -2,11 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import Icon from "./Icon";
+import FlowMarketBrand from "./FlowMarketBrand";
 
 export default function Footer() {
+  const pathname = usePathname();
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  // Masquer le footer uniquement sur les pages admin
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,16 +114,8 @@ export default function Footer() {
 
           {/* Brand column — 2 cols */}
           <div className="lg:col-span-2 relative">
-            <Link href="/" className="flex items-center gap-3 mb-5" aria-label="FlowMarket Home">
-              <div className="relative w-12 h-12">
-                <div className="absolute inset-0 bg-gradient-to-br from-indigo-500 to-amber-500 rounded-xl rotate-6" />
-                <div className="absolute inset-0 bg-[#111118] rounded-xl flex items-center justify-center">
-                  <span className="text-xl font-bold gradient-text">F</span>
-                </div>
-              </div>
-              <span className="text-2xl font-bold tracking-tight">
-                Flow<span className="gradient-text">Market</span>
-              </span>
+            <Link href="/" className="inline-flex mb-5" aria-label="FlowMarket Accueil">
+              <FlowMarketBrand size="lg" />
             </Link>
 
             <p className="text-gray-400 mb-7 max-w-xs leading-relaxed text-sm">
@@ -259,9 +259,9 @@ export default function Footer() {
             </div>
 
             {/* Language selector */}
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#111118] border border-[#2a2a3a] text-gray-400 text-xs cursor-pointer hover:border-indigo-500/40 hover:text-white transition-all">
-              <span>🇫🇷</span>
-              <span>FR</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#111118] border border-[#2a2a3a] text-gray-400 text-xs">
+              <Icon name="globe" className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="font-mono text-[11px]">FR / EN</span>
             </div>
 
             {/* Back to top */}

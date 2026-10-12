@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Fragment } from "react";
 import Link from "next/link";
 import { Workflow } from "@/data/workflows";
 import Icon from "./Icon";
+import N8nInteractiveCanvas from "./N8nInteractiveCanvas";
+import { useLanguage } from "./LanguageProvider";
 
 interface QuickViewModalProps {
   workflow: Workflow | null;
@@ -15,6 +17,15 @@ interface QuickViewModalProps {
 export default function QuickViewModal({ workflow, isOpen, onClose }: QuickViewModalProps) {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const [copied, setCopied] = useState(false);
+  const { formatPrice } = useLanguage();
+
+  const handleCopyJson = () => {
+    if (!workflow?.n8nJson) return;
+    navigator.clipboard.writeText(workflow.n8nJson);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2500);
+  };
 
   // Handle focus trap and ESC key
   useEffect(() => {
@@ -157,7 +168,10 @@ export default function QuickViewModal({ workflow, isOpen, onClose }: QuickViewM
             </div>
 
             {/* Demo Video Front-End Player & Protected Backend Banner */}
+            {/* Interactive n8n Canvas Architecture */}
             <div className="mb-8 space-y-4">
+              <N8nInteractiveCanvas pipeline={workflow.pipeline} workflowTitle={workflow.title} />
+
               {/* Video Player */}
               <div className="rounded-2xl border border-[#2a2a3a] overflow-hidden bg-[#07070c]">
                 <div className="flex items-center justify-between px-4 py-3 bg-[#0d0d14] border-b border-[#2a2a3a]">
@@ -177,24 +191,6 @@ export default function QuickViewModal({ workflow, isOpen, onClose }: QuickViewM
                     playsInline
                     className="w-full h-full object-cover"
                   />
-                </div>
-              </div>
-
-              {/* Protected Backend Canvas Badge */}
-              <div className="p-4 rounded-2xl bg-amber-500/5 border border-amber-500/20 flex items-start gap-3.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0 text-amber-400 mt-0.5">
-                  <Icon name="lock" className="w-4 h-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-                    Architecture & JSON backend 100% protégés
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 font-mono">
-                      Confidentiel
-                    </span>
-                  </h4>
-                  <p className="text-xs text-gray-400 mt-1 leading-relaxed">
-                    Le schéma interne des nœuds n8n est masqué pour préserver la propriété intellectuelle. Le fichier source JSON prêt à l&apos;importation vous sera immédiatement délivré dès validation de votre commande.
-                  </p>
                 </div>
               </div>
             </div>
@@ -256,20 +252,24 @@ export default function QuickViewModal({ workflow, isOpen, onClose }: QuickViewM
             </div>
 
             {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-[#2a2a3a]">
+            <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-[#2a2a3a]">
+              {workflow.n8nJson && (
+                <button
+                  type="button"
+                  onClick={() => handleCopyJson()}
+                  className="px-5 py-3.5 bg-[#171725] hover:bg-[#1e1e30] border border-indigo-500/30 text-indigo-300 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                >
+                  <Icon name={copied ? "check" : "copy"} className="w-4 h-4 text-emerald-400" />
+                  <span>{copied ? "JSON copié dans le presse-papier !" : "Copier le JSON n8n"}</span>
+                </button>
+              )}
               <Link
                 href={`/workflows/${workflow.slug}`}
-                className="btn-shine flex-1 justify-center px-6 py-4 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-indigo-500/25 transition-all"
+                className="btn-shine flex-1 justify-center px-6 py-3.5 bg-gradient-to-r from-indigo-500 to-amber-500 text-white rounded-xl font-semibold text-base hover:shadow-2xl hover:shadow-indigo-500/25 transition-all text-center flex items-center gap-2"
                 onClick={onClose}
               >
-                Acheter maintenant ({workflow.price}€)
-              </Link>
-              <Link
-                href={`/workflows/${workflow.slug}`}
-                className="flex-1 justify-center px-6 py-4 bg-[#111118]/80 backdrop-blur border border-indigo-500/30 text-white rounded-xl font-semibold text-lg hover:bg-indigo-500/10 hover:border-indigo-500/50 transition-all"
-                onClick={onClose}
-              >
-                Voir la démo gratuite
+                <span>{workflow.price === 0 ? "Télécharger gratuitement" : `Acheter maintenant (${formatPrice(workflow.price)})`}</span>
+                <Icon name="arrowRight" className="w-4 h-4" />
               </Link>
             </div>
           </div>

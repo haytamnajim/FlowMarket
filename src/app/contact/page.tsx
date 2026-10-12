@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useState, useRef } from "react";
 import Icon from "@/components/Icon";
+import InteractiveParticles from "@/components/InteractiveParticles";
+import FadeIn from "@/components/FadeIn";
 
 type TopicType = "project" | "support" | "partnership" | "general";
 
@@ -25,8 +27,19 @@ export default function ContactPage() {
       videoRef.current.pause();
       setIsPlaying(false);
     } else {
-      videoRef.current.play();
-      setIsPlaying(true);
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => {
+            // Ignore AbortError caused by pause() interrupting play()
+            if (err.name !== "AbortError") {
+              console.error("Video play error:", err);
+            }
+          });
+      }
     }
   };
 
@@ -87,7 +100,7 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("submitting");
-    await new Promise((r) => setTimeout(r, 1200)); // Simulation envoi
+    await new Promise((r) => setTimeout(r, 1200));
     setStatus("success");
     setFormData({ name: "", email: "", company: "", message: "" });
     setAttachedFile(null);
@@ -118,311 +131,330 @@ export default function ContactPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#07070b] text-gray-200 selection:bg-indigo-500/30 selection:text-indigo-200">
-      {/* Background Gradients & Glows */}
+    <main className="min-h-screen bg-[#0a0a0f] text-gray-200 selection:bg-indigo-500/30 selection:text-indigo-200 relative overflow-hidden">
+      {/* Background Interactive Particles */}
+      <InteractiveParticles count={40} />
+
+      {/* Ambient Lighting & Grids */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-indigo-600/15 via-purple-600/10 to-transparent rounded-full blur-[160px]" />
-        <div className="absolute top-[40%] -right-40 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[180px]" />
-        <div className="absolute bottom-10 -left-40 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[180px]" />
-        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[850px] h-[500px] bg-gradient-to-b from-indigo-600/15 via-purple-600/10 to-transparent rounded-full blur-[170px]" />
+        <div className="absolute top-[35%] -right-48 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-[180px]" />
+        <div className="absolute bottom-10 -left-48 w-[600px] h-[600px] bg-indigo-500/10 rounded-full blur-[180px]" />
+        <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-35" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 lg:pt-36 pb-24">
-        {/* Header / Hero compact */}
-        <div className="text-center max-w-3xl mx-auto mb-14">
-          {/* Status pill badge */}
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#12121b]/90 border border-white/10 shadow-lg backdrop-blur-md mb-6">
-            <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
-            </span>
-            <span className="text-xs font-medium text-gray-300">
-              Experts disponibles • Réponse moyenne <strong className="text-emerald-400 font-semibold">&lt; 1h</strong>
-            </span>
-          </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
+        {/* Header Compact & Épuré */}
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
+          <FadeIn direction="down">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#111118]/80 border border-white/10 shadow-lg backdrop-blur-xl mb-4">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+              </span>
+              <span className="text-[11px] sm:text-xs font-medium text-gray-300">
+                Support technique & consulting · Temps de réponse moyen <strong className="text-emerald-400 font-semibold">&lt; 1h</strong>
+              </span>
+            </div>
+          </FadeIn>
 
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white mb-5 leading-[1.15]">
-            Parlons de vos automatisations <span className="gradient-text">n8n</span>
-          </h1>
-          <p className="text-base sm:text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto">
-            Un projet d'automatisation sur-mesure, une question technique ou une demande de partenariat ?
-            Échangez directement avec nos ingénieurs.
-          </p>
+          <FadeIn direction="up" delay={100}>
+            <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white mb-3 leading-tight">
+              Parlons de vos automatisations{" "}
+              <span className="bg-gradient-to-r from-indigo-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                n8n
+              </span>
+            </h1>
+          </FadeIn>
+
+          <FadeIn direction="up" delay={200}>
+            <p className="text-xs sm:text-sm md:text-base text-gray-400 leading-relaxed max-w-xl mx-auto">
+              Un projet sur-mesure, une question sur un template ou une opportunité de partenariat ? Échangez directement avec nos ingénieurs certifiés.
+            </p>
+          </FadeIn>
         </div>
 
         {/* Main Grid: Form + Fast Track Sidebar */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-24">
           
-          {/* LEFT: Interactive Modern Form (7 cols) */}
-          <div className="lg:col-span-7 bg-[#0e0e17]/85 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
-            {/* Subtle card glow */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+          {/* LEFT: Modern Interactive Form (7 cols) */}
+          <FadeIn direction="left" delay={100} className="lg:col-span-7">
+            <div className="bg-[#111118]/85 backdrop-blur-2xl border border-white/10 hover:border-white/15 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden transition-all duration-300">
+              {/* Subtle top glow */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
 
-            <div className="relative z-10">
-              <div className="mb-8">
-                <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider block mb-2">
-                  Étape 1 sur 2
-                </span>
-                <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                  Quel est l'objet de votre demande ?
-                </h2>
-                <p className="text-xs sm:text-sm text-gray-400">
-                  Sélectionnez la catégorie qui décrit le mieux votre besoin :
-                </p>
-
-                {/* Topic selector pills */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-                  {topics.map((t) => {
-                    const isSelected = topic === t.id;
-                    return (
-                      <button
-                        key={t.id}
-                        type="button"
-                        onClick={() => setTopic(t.id)}
-                        className={`text-left p-3.5 rounded-2xl border transition-all duration-200 flex items-start gap-3 ${
-                          isSelected
-                            ? "bg-indigo-600/15 border-indigo-500 shadow-md shadow-indigo-500/20 ring-1 ring-indigo-500/50"
-                            : "bg-[#141420]/70 border-white/5 hover:border-white/20 hover:bg-[#181826]"
-                        }`}
-                      >
-                        <div
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
-                            isSelected
-                              ? "bg-gradient-to-br from-indigo-500 to-amber-500 text-white shadow"
-                              : "bg-[#1f1f2e] text-gray-400"
-                          }`}
-                        >
-                          <Icon name={t.icon} className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-300"}`}>
-                            {t.label}
-                          </p>
-                          <p className="text-[11px] text-gray-400 leading-snug line-clamp-1 mt-0.5">
-                            {t.desc}
-                          </p>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Conditional context for "project" */}
-              {topic === "project" && (
-                <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-[#141422]/70 border border-indigo-500/20 animate-in fade-in duration-300">
-                  <div className="mb-4">
-                    <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-                      Budget estimé pour ce projet
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      {[
-                        { id: "<1k", label: "< 1 000 €" },
-                        { id: "1k-3k", label: "1k - 3k €" },
-                        { id: "3k-5k", label: "3k - 5k €" },
-                        { id: ">5k", label: "5k € +" },
-                      ].map((b) => (
-                        <button
-                          key={b.id}
-                          type="button"
-                          onClick={() => setBudget(b.id)}
-                          className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all ${
-                            budget === b.id
-                              ? "bg-gradient-to-r from-indigo-500 to-indigo-600 border-indigo-400 text-white shadow-sm"
-                              : "bg-[#181828] border-white/5 text-gray-400 hover:text-white hover:border-white/20"
-                          }`}
-                        >
-                          {b.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
-                      Échéance souhaitée
-                    </label>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[
-                        { id: "urgent", label: "Urgent (< 1 sem)" },
-                        { id: "month", label: "Ce mois-ci" },
-                        { id: "flexible", label: "Exploration" },
-                      ].map((u) => (
-                        <button
-                          key={u.id}
-                          type="button"
-                          onClick={() => setUrgency(u.id)}
-                          className={`py-2 px-2 text-xs font-medium rounded-xl border text-center transition-all truncate ${
-                            urgency === u.id
-                              ? "bg-amber-500/20 border-amber-500/60 text-amber-300 font-semibold"
-                              : "bg-[#181828] border-white/5 text-gray-400 hover:text-white hover:border-white/20"
-                          }`}
-                        >
-                          {u.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Status Message */}
-              {status === "success" && (
-                <div className="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 flex items-center gap-3 animate-in zoom-in-95 duration-300 shadow-lg">
-                  <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                    <Icon name="check" className="w-5 h-5 text-emerald-400" />
-                  </div>
-                  <div>
-                    <p className="font-bold text-sm text-emerald-200">Message envoyé avec succès !</p>
-                    <p className="text-xs text-emerald-400/90 mt-0.5">
-                      Un accusé de réception a été envoyé. Notre équipe vous répondra très rapidement.
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Form inputs */}
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider block">
-                  Étape 2 sur 2 • Vos coordonnées
-                </span>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="name" className="block text-xs font-medium text-gray-300 mb-1.5">
-                      Nom complet <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <Icon name="user" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                      <input
-                        type="text"
-                        id="name"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        placeholder="Alexandre Dupont"
-                        className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-xs font-medium text-gray-300 mb-1.5">
-                      Adresse email pro <span className="text-rose-400">*</span>
-                    </label>
-                    <div className="relative">
-                      <Icon name="mail" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
-                      <input
-                        type="email"
-                        id="email"
-                        required
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        placeholder="alex@entreprise.com"
-                        className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label htmlFor="company" className="block text-xs font-medium text-gray-300 mb-1.5">
-                    Entreprise / Organisation <span className="text-gray-500 text-[11px] font-normal">(Optionnel)</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="company"
-                    value={formData.company}
-                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                    placeholder="Acme Corp"
-                    className="w-full px-4 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message" className="block text-xs font-medium text-gray-300 mb-1.5">
-                    Détails de votre message <span className="text-rose-400">*</span>
-                  </label>
-                  <div className="relative">
-                    <textarea
-                      id="message"
-                      required
-                      rows={4}
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder={
-                        topic === "project"
-                          ? "Décrivez le processus que vous souhaitez automatiser, vos outils (Airtable, Slack, CRM...) et vos objectifs..."
-                          : topic === "support"
-                          ? "Indiquez le nom du template ou le problème rencontré, message d'erreur éventuel..."
-                          : "Expliquez-nous votre proposition ou posez votre question..."
-                      }
-                      className="w-full p-4 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
-                    />
-                  </div>
-                </div>
-
-                {/* File attachment toggle */}
-                <div className="flex items-center justify-between p-3 rounded-xl bg-[#141420]/60 border border-white/5">
-                  <div className="flex items-center gap-2.5">
-                    <Icon name="paperclip" className="w-4 h-4 text-indigo-400" />
-                    <span className="text-xs text-gray-300 truncate max-w-[220px] sm:max-w-xs">
-                      {attachedFile ? (
-                        <span className="text-emerald-400 font-semibold">{attachedFile}</span>
-                      ) : (
-                        "Joindre un fichier (workflow JSON, capture d'écran, doc...)"
-                      )}
+              <div className="relative z-10">
+                <div className="mb-8">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    <span className="text-xs font-semibold text-indigo-400 uppercase tracking-wider">
+                      Étape 1 sur 2 • Type de demande
                     </span>
                   </div>
-                  <label className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-colors">
-                    {attachedFile ? "Changer" : "Parcourir"}
+                  <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+                    Quel est l&apos;objet de votre prise de contact ?
+                  </h2>
+                  <p className="text-xs sm:text-sm text-gray-400">
+                    Sélectionnez la catégorie qui correspond à votre besoin :
+                  </p>
+
+                  {/* Topic Selector */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    {topics.map((t) => {
+                      const isSelected = topic === t.id;
+                      return (
+                        <button
+                          key={t.id}
+                          type="button"
+                          onClick={() => setTopic(t.id)}
+                          className={`text-left p-3.5 rounded-2xl border transition-all duration-200 flex items-start gap-3 cursor-pointer ${
+                            isSelected
+                              ? "bg-indigo-600/15 border-indigo-500 shadow-md shadow-indigo-500/20 ring-1 ring-indigo-500/40"
+                              : "bg-[#141420]/80 border-white/5 hover:border-white/20 hover:bg-[#181826]"
+                          }`}
+                        >
+                          <div
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${
+                              isSelected
+                                ? "bg-gradient-to-br from-indigo-500 to-amber-500 text-white shadow"
+                                : "bg-[#1e1e2c] text-gray-400"
+                            }`}
+                          >
+                            <Icon name={t.icon} className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-gray-300"}`}>
+                              {t.label}
+                            </p>
+                            <p className="text-[11px] text-gray-400 leading-snug line-clamp-1 mt-0.5">
+                              {t.desc}
+                            </p>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Conditional context for "project" */}
+                {topic === "project" && (
+                  <div className="mb-8 p-4 sm:p-5 rounded-2xl bg-[#141422]/80 border border-indigo-500/20 animate-in fade-in duration-300">
+                    <div className="mb-4">
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
+                        Budget estimé pour ce projet
+                      </label>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {[
+                          { id: "<1k", label: "< 1 000 €" },
+                          { id: "1k-3k", label: "1k - 3k €" },
+                          { id: "3k-5k", label: "3k - 5k €" },
+                          { id: ">5k", label: "5k € +" },
+                        ].map((b) => (
+                          <button
+                            key={b.id}
+                            type="button"
+                            onClick={() => setBudget(b.id)}
+                            className={`py-2 px-3 text-xs font-semibold rounded-xl border text-center transition-all cursor-pointer ${
+                              budget === b.id
+                                ? "bg-gradient-to-r from-indigo-500 to-indigo-600 border-indigo-400 text-white shadow-sm"
+                                : "bg-[#181828] border-white/5 text-gray-400 hover:text-white hover:border-white/20"
+                            }`}
+                          >
+                            {b.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-300 uppercase tracking-wider mb-2">
+                        Échéance souhaitée
+                      </label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {[
+                          { id: "urgent", label: "Urgent (< 1 sem)" },
+                          { id: "month", label: "Ce mois-ci" },
+                          { id: "flexible", label: "Exploration" },
+                        ].map((u) => (
+                          <button
+                            key={u.id}
+                            type="button"
+                            onClick={() => setUrgency(u.id)}
+                            className={`py-2 px-2 text-xs font-medium rounded-xl border text-center transition-all truncate cursor-pointer ${
+                              urgency === u.id
+                                ? "bg-amber-500/20 border-amber-500/60 text-amber-300 font-semibold"
+                                : "bg-[#181828] border-white/5 text-gray-400 hover:text-white hover:border-white/20"
+                            }`}
+                          >
+                            {u.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Status Message */}
+                {status === "success" && (
+                  <div className="mb-6 p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 flex items-center gap-3 animate-in zoom-in-95 duration-300 shadow-lg">
+                    <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                      <Icon name="check" className="w-5 h-5 text-emerald-400" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-sm text-emerald-200">Message transmis avec succès !</p>
+                      <p className="text-xs text-emerald-400/90 mt-0.5">
+                        Un accusé de réception a été envoyé. Notre équipe vous répondra très rapidement.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Form fields */}
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                    <span className="text-xs font-semibold text-amber-400 uppercase tracking-wider block">
+                      Étape 2 sur 2 • Vos coordonnées
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="name" className="block text-xs font-medium text-gray-300 mb-1.5">
+                        Nom complet <span className="text-rose-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <Icon name="user" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <input
+                          type="text"
+                          id="name"
+                          required
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          placeholder="Alexandre Dupont"
+                          className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="email" className="block text-xs font-medium text-gray-300 mb-1.5">
+                        Adresse email pro <span className="text-rose-400">*</span>
+                      </label>
+                      <div className="relative">
+                        <Icon name="mail" className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <input
+                          type="email"
+                          id="email"
+                          required
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          placeholder="alex@entreprise.com"
+                          className="w-full pl-10 pr-3.5 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="company" className="block text-xs font-medium text-gray-300 mb-1.5">
+                      Entreprise / Organisation <span className="text-gray-500 text-[11px] font-normal">(Optionnel)</span>
+                    </label>
                     <input
-                      type="file"
-                      onChange={handleFakeFileUpload}
-                      className="hidden"
-                      accept=".json,.png,.jpg,.jpeg,.pdf,.zip"
+                      type="text"
+                      id="company"
+                      value={formData.company}
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                      placeholder="Acme Corp"
+                      className="w-full px-4 py-3 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all"
                     />
-                  </label>
-                </div>
+                  </div>
 
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  disabled={status === "submitting"}
-                  className="w-full btn-shine py-4 px-6 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-indigo-500 via-indigo-600 to-amber-500 hover:shadow-xl hover:shadow-indigo-500/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  {status === "submitting" ? (
-                    <>
-                      <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                      <span>Transmission en cours...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Icon name="send" className="w-4 h-4" />
-                      <span>Envoyer ma demande</span>
-                    </>
-                  )}
-                </button>
+                  <div>
+                    <label htmlFor="message" className="block text-xs font-medium text-gray-300 mb-1.5">
+                      Détails de votre message <span className="text-rose-400">*</span>
+                    </label>
+                    <div className="relative">
+                      <textarea
+                        id="message"
+                        required
+                        rows={4}
+                        value={formData.message}
+                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                        placeholder={
+                          topic === "project"
+                            ? "Décrivez le processus que vous souhaitez automatiser, vos outils (Airtable, Slack, CRM...) et vos objectifs..."
+                            : topic === "support"
+                            ? "Indiquez le nom du template ou le problème rencontré, message d'erreur éventuel..."
+                            : "Expliquez-nous votre proposition ou posez votre question..."
+                        }
+                        className="w-full p-4 rounded-xl bg-[#141420] border border-white/10 text-white placeholder-gray-500 text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all resize-none"
+                      />
+                    </div>
+                  </div>
 
-                <div className="flex items-center justify-center gap-4 text-xs text-gray-500 pt-1">
-                  <span className="flex items-center gap-1.5">
-                    <Icon name="shield" className="w-3.5 h-3.5 text-emerald-400" />
-                    Données 100% sécurisées
-                  </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-1.5">
-                    <Icon name="lock" className="w-3.5 h-3.5 text-indigo-400" />
-                    Aucun démarchage commercial
-                  </span>
-                </div>
-              </form>
+                  {/* File attachment toggle */}
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-[#141420]/70 border border-white/5">
+                    <div className="flex items-center gap-2.5">
+                      <Icon name="paperclip" className="w-4 h-4 text-indigo-400" />
+                      <span className="text-xs text-gray-300 truncate max-w-[220px] sm:max-w-xs">
+                        {attachedFile ? (
+                          <span className="text-emerald-400 font-semibold">{attachedFile}</span>
+                        ) : (
+                          "Joindre un fichier (workflow JSON, capture d'écran, doc...)"
+                        )}
+                      </span>
+                    </div>
+                    <label className="cursor-pointer text-xs font-semibold px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-200 transition-colors">
+                      {attachedFile ? "Changer" : "Parcourir"}
+                      <input
+                        type="file"
+                        onChange={handleFakeFileUpload}
+                        className="hidden"
+                        accept=".json,.png,.jpg,.jpeg,.pdf,.zip"
+                      />
+                    </label>
+                  </div>
+
+                  {/* Submit button */}
+                  <button
+                    type="submit"
+                    disabled={status === "submitting"}
+                    className="w-full btn-shine py-4 px-6 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-indigo-500 via-indigo-600 to-amber-500 hover:shadow-xl hover:shadow-indigo-500/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {status === "submitting" ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>Transmission en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon name="send" className="w-4 h-4" />
+                        <span>Envoyer ma demande</span>
+                      </>
+                    )}
+                  </button>
+
+                  <div className="flex items-center justify-center gap-4 text-xs text-gray-500 pt-1">
+                    <span className="flex items-center gap-1.5">
+                      <Icon name="shield" className="w-3.5 h-3.5 text-emerald-400" />
+                      Données 100% sécurisées
+                    </span>
+                    <span>•</span>
+                    <span className="flex items-center gap-1.5">
+                      <Icon name="lock" className="w-3.5 h-3.5 text-indigo-400" />
+                      Confidentialité assurée
+                    </span>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
+          </FadeIn>
 
           {/* RIGHT: Fast Track & Channels (5 cols) */}
-          <div className="lg:col-span-5 space-y-5">
+          <FadeIn direction="right" delay={150} className="lg:col-span-5 space-y-5">
             {/* Video Showcase Card - Studio n8n */}
-            <div className="relative overflow-hidden rounded-3xl bg-[#0e0e17]/90 border border-white/10 shadow-2xl backdrop-blur-xl group hover:border-indigo-500/40 transition-all duration-300">
+            <div className="relative overflow-hidden rounded-3xl bg-[#111118]/85 border border-white/10 shadow-2xl backdrop-blur-xl group hover:border-indigo-500/40 transition-all duration-300">
               <div className="relative aspect-[16/10] sm:aspect-video w-full overflow-hidden bg-black/60">
                 <video
                   ref={videoRef}
@@ -436,8 +468,7 @@ export default function ContactPage() {
                 </video>
 
                 {/* Subtle gradient overlays to blend seamlessly */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e17] via-transparent to-black/50 pointer-events-none" />
-                <div className="absolute inset-0 bg-indigo-500/10 mix-blend-color pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#111118] via-transparent to-black/50 pointer-events-none" />
 
                 {/* Top badges & controls */}
                 <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between">
@@ -497,7 +528,7 @@ export default function ContactPage() {
                   Réserver un appel de cadrage
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-400 mb-6 leading-relaxed">
-                  15 minutes en visio avec un architecte d'automatisation FlowMarket pour cadrer votre flux n8n et obtenir des conseils immédiats.
+                  15 minutes en visio avec un architecte d&apos;automatisation FlowMarket pour cadrer votre flux n8n et obtenir des conseils immédiats.
                 </p>
 
                 <button
@@ -512,7 +543,7 @@ export default function ContactPage() {
             </div>
 
             {/* Direct Email Card with 1-click Copy */}
-            <div className="rounded-3xl bg-[#0e0e17]/80 border border-white/10 p-6 backdrop-blur-xl relative overflow-hidden">
+            <div className="rounded-3xl bg-[#111118]/80 border border-white/10 p-6 backdrop-blur-xl relative overflow-hidden">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-indigo-500/15 border border-indigo-500/25 flex items-center justify-center text-indigo-400">
@@ -550,7 +581,7 @@ export default function ContactPage() {
             </div>
 
             {/* Community Discord Card */}
-            <div className="rounded-3xl bg-[#0e0e17]/80 border border-white/10 p-6 backdrop-blur-xl relative overflow-hidden group hover:border-[#5865F2]/40 transition-all">
+            <div className="rounded-3xl bg-[#111118]/80 border border-white/10 p-6 backdrop-blur-xl relative overflow-hidden group hover:border-[#5865F2]/40 transition-all">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3.5">
                   <div className="w-10 h-10 rounded-xl bg-[#5865F2]/20 border border-[#5865F2]/30 flex items-center justify-center text-[#5865F2]">
@@ -585,14 +616,14 @@ export default function ContactPage() {
               </Link>
             </div>
 
-            {/* Practical info badges (Horaires, localisation) */}
-            <div className="rounded-3xl bg-[#0e0e17]/60 border border-white/10 p-5 backdrop-blur-md space-y-3.5">
+            {/* Practical info badges */}
+            <div className="rounded-3xl bg-[#111118]/60 border border-white/10 p-5 backdrop-blur-md space-y-3.5">
               <div className="flex items-center gap-3 text-xs text-gray-300">
                 <div className="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 flex-shrink-0">
                   <Icon name="clock" className="w-4 h-4" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white">Disponibilité de l'équipe</p>
+                  <p className="font-semibold text-white">Disponibilité de l&apos;équipe</p>
                   <p className="text-gray-400 text-[11px]">Du Lundi au Vendredi • 9h00 - 18h30 (Heure de Paris)</p>
                 </div>
               </div>
@@ -607,95 +638,105 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </FadeIn>
         </div>
 
         {/* FAQ Accordion Section */}
-        <section className="max-w-4xl mx-auto mt-8">
-          <div className="text-center mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
-              <Icon name="helpCircle" className="w-3.5 h-3.5" />
-              Foire aux questions
+        <FadeIn direction="up">
+          <section className="max-w-4xl mx-auto mt-8">
+            <div className="text-center mb-10">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold mb-3">
+                <Icon name="helpCircle" className="w-3.5 h-3.5" />
+                Foire aux questions
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Questions fréquentes
+              </h2>
+              <p className="text-sm text-gray-400">
+                Des réponses claires à vos interrogations avant de nous contacter.
+              </p>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-              Questions fréquentes
-            </h2>
-            <p className="text-sm text-gray-400">
-              Des réponses claires à vos interrogations avant de nous contacter.
-            </p>
-          </div>
 
-          <div className="space-y-3">
-            {faqs.map((faq, index) => {
-              const isOpen = openFaq === index;
-              return (
-                <div
-                  key={index}
-                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
-                    isOpen
-                      ? "bg-[#10101b] border-indigo-500/40 shadow-lg"
-                      : "bg-[#0c0c14] border-white/5 hover:border-white/15"
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => setOpenFaq(isOpen ? null : index)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
+            <div className="space-y-3">
+              {faqs.map((faq, index) => {
+                const isOpen = openFaq === index;
+                return (
+                  <div
+                    key={index}
+                    className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                      isOpen
+                        ? "bg-[#11111c] border-indigo-500/40 shadow-lg"
+                        : "bg-[#111118]/60 border-white/5 hover:border-white/15"
+                    }`}
                   >
-                    <span className="font-semibold text-sm sm:text-base text-gray-200">
-                      {faq.q}
-                    </span>
-                    <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-200 flex-shrink-0 ${
-                        isOpen ? "bg-indigo-500 text-white rotate-180" : "bg-white/5 text-gray-400"
-                      }`}
+                    <button
+                      type="button"
+                      onClick={() => setOpenFaq(isOpen ? null : index)}
+                      className="w-full p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
                     >
-                      <Icon name="chevronDown" className="w-4 h-4" />
-                    </div>
-                  </button>
-                  {isOpen && (
-                    <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-gray-400 leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
+                      <span className="font-semibold text-sm sm:text-base text-gray-200">
+                        {faq.q}
+                      </span>
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-transform duration-200 flex-shrink-0 ${
+                          isOpen ? "bg-indigo-500 text-white rotate-180" : "bg-white/5 text-gray-400"
+                        }`}
+                      >
+                        <Icon name="chevronDown" className="w-4 h-4" />
+                      </div>
+                    </button>
+                    {isOpen && (
+                      <div className="px-5 pb-5 pt-1 text-xs sm:text-sm text-gray-400 leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        </FadeIn>
 
         {/* Bottom CTA Banner */}
-        <div className="mt-20 rounded-3xl bg-gradient-to-r from-indigo-950/60 via-[#111122] to-amber-950/40 border border-white/10 p-8 sm:p-12 text-center relative overflow-hidden">
-          <div className="relative z-10 max-w-2xl mx-auto">
-            <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
-              Besoin de modèles prêts à l'emploi dès maintenant ?
-            </h3>
-            <p className="text-sm text-gray-400 mb-6">
-              Découvrez notre catalogue de plus de 50 workflows n8n testés, documentés et prêts à être importés dans votre instance.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <Link
-                href="/workflows"
-                className="btn-shine px-6 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-500 to-amber-500 text-white shadow-lg hover:shadow-indigo-500/30 transition-all inline-flex items-center gap-2"
-              >
-                <Icon name="bolt" className="w-4 h-4" />
-                Explorer la boutique de workflows
-              </Link>
-              <Link
-                href="/categories"
-                className="px-6 py-3.5 rounded-xl font-semibold text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all inline-flex items-center gap-2"
-              >
-                Parcourir les catégories
-              </Link>
+        <FadeIn direction="up" delay={150}>
+          <div className="mt-20 rounded-3xl bg-gradient-to-r from-indigo-950/60 via-[#111122] to-amber-950/40 border border-white/10 p-8 sm:p-12 text-center relative overflow-hidden">
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <h3 className="text-2xl sm:text-3xl font-extrabold text-white mb-3">
+                Besoin de modèles prêts à l&apos;emploi dès maintenant ?
+              </h3>
+              <p className="text-sm text-gray-400 mb-6">
+                Découvrez notre catalogue de plus de 200 workflows n8n testés, documentés et prêts à être importés dans votre instance.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <Link
+                  href="/workflows"
+                  className="btn-shine px-6 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-500 to-amber-500 text-white shadow-lg hover:shadow-indigo-500/30 transition-all inline-flex items-center gap-2"
+                >
+                  <Icon name="bolt" className="w-4 h-4" />
+                  Explorer la boutique de workflows
+                </Link>
+                <Link
+                  href="/categories"
+                  className="px-6 py-3.5 rounded-xl font-semibold text-sm bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-all inline-flex items-center gap-2"
+                >
+                  Parcourir les catégories
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        </FadeIn>
       </div>
 
-      {/* Booking Modal */}
+      {/* Booking Modal (Centré parfaitement sur l'écran) */}
       {showBookingModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="bg-[#11111c] border border-indigo-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative">
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setShowBookingModal(false)}
+        >
+          <div 
+            className="bg-[#11111c] border border-indigo-500/40 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative my-auto mx-auto transform transition-all"
+            onClick={(e) => e.stopPropagation()}
+          >
             <button
               onClick={() => setShowBookingModal(false)}
               className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors cursor-pointer"
@@ -711,7 +752,7 @@ export default function ContactPage() {
               Appel de cadrage n8n (15 min)
             </h3>
             <p className="text-xs sm:text-sm text-gray-400 mb-6 leading-relaxed">
-              Discutez de votre projet en direct avec l'un de nos spécialistes techniques. Choisissez une date qui vous convient :
+              Discutez de votre projet en direct avec l&apos;un de nos spécialistes techniques. Choisissez une date qui vous convient :
             </p>
 
             <div className="space-y-2.5 mb-6">

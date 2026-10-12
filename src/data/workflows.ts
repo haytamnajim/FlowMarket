@@ -16,6 +16,8 @@ export interface Workflow {
   updatedAt?: string;
   nodes: number;
   complexity: "Débutant" | "Intermédiaire" | "Avancé";
+  pipeline?: string[];
+  n8nJson?: string;
   demoVideo?: string;
   demoPoster?: string;
   n8nJsonProtected?: string;
@@ -167,6 +169,20 @@ export const workflows: Workflow[] = [
     createdAt: "2025-01-15",
     nodes: 12,
     complexity: "Intermédiaire",
+    pipeline: ["Webhook", "Code", "HubSpot", "Slack"],
+    n8nJson: JSON.stringify({
+      name: "Lead Scoring Automation",
+      nodes: [
+        { name: "Webhook Lead Form", type: "n8n-nodes-base.webhook", position: [250, 300] },
+        { name: "Calculate Score", type: "n8n-nodes-base.code", position: [450, 300] },
+        { name: "HubSpot Sync", type: "n8n-nodes-base.hubspot", position: [650, 200] },
+        { name: "Slack Alert", type: "n8n-nodes-base.slack", position: [650, 400] }
+      ],
+      connections: {
+        "Webhook Lead Form": { main: [[{ node: "Calculate Score", type: "main", index: 0 }]] },
+        "Calculate Score": { main: [[{ node: "HubSpot Sync", type: "main", index: 0 }, { node: "Slack Alert", type: "main", index: 0 }]] }
+      }
+    }, null, 2),
   },
   {
     id: "2",
@@ -194,6 +210,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-02-10",
     nodes: 18,
     complexity: "Avancé",
+    pipeline: ["Stripe", "HTML2PDF", "Google Drive", "Gmail"],
+    n8nJson: JSON.stringify({
+      name: "Stripe Invoice Generator",
+      nodes: [
+        { name: "Stripe Payment Event", type: "n8n-nodes-base.stripeTrigger", position: [200, 300] },
+        { name: "Generate Invoice PDF", type: "n8n-nodes-base.html", position: [400, 300] },
+        { name: "Save to Drive", type: "n8n-nodes-base.googleDrive", position: [600, 250] },
+        { name: "Send via Gmail", type: "n8n-nodes-base.gmail", position: [600, 400] }
+      ],
+      connections: {}
+    }, null, 2),
   },
   {
     id: "3",
@@ -221,6 +248,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-03-05",
     nodes: 15,
     complexity: "Intermédiaire",
+    pipeline: ["Cron", "HTTP Request", "OpenAI", "Google Sheets"],
+    n8nJson: JSON.stringify({
+      name: "Competitor Watcher",
+      nodes: [
+        { name: "Schedule Trigger", type: "n8n-nodes-base.scheduleTrigger", position: [200, 300] },
+        { name: "Fetch Competitor Webpage", type: "n8n-nodes-base.httpRequest", position: [420, 300] },
+        { name: "Analyze Changes AI", type: "n8n-nodes-base.openAi", position: [640, 300] },
+        { name: "Log to Sheets", type: "n8n-nodes-base.googleSheets", position: [860, 300] }
+      ],
+      connections: {}
+    }, null, 2),
   },
   {
     id: "4",
@@ -248,6 +286,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-01-28",
     nodes: 22,
     complexity: "Avancé",
+    pipeline: ["Calendly", "DocuSign", "Notion", "Slack"],
+    n8nJson: JSON.stringify({
+      name: "Client Onboarding Pipeline",
+      nodes: [
+        { name: "Calendly Meeting Booked", type: "n8n-nodes-base.calendlyTrigger", position: [200, 300] },
+        { name: "Send DocuSign Contract", type: "n8n-nodes-base.docusign", position: [440, 300] },
+        { name: "Create Notion Workspace", type: "n8n-nodes-base.notion", position: [680, 250] },
+        { name: "Team Slack Notification", type: "n8n-nodes-base.slack", position: [680, 400] }
+      ],
+      connections: {}
+    }, null, 2),
   },
   {
     id: "5",
@@ -275,6 +324,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-04-12",
     nodes: 14,
     complexity: "Intermédiaire",
+    pipeline: ["Schedule", "Meta Ads", "GA4", "Email"],
+    n8nJson: JSON.stringify({
+      name: "Weekly Marketing Digest",
+      nodes: [
+        { name: "Every Monday 9AM", type: "n8n-nodes-base.scheduleTrigger", position: [200, 300] },
+        { name: "Fetch Meta Ads API", type: "n8n-nodes-base.httpRequest", position: [420, 220] },
+        { name: "Fetch GA4 Traffic", type: "n8n-nodes-base.googleAnalytics", position: [420, 380] },
+        { name: "Send Email Digest", type: "n8n-nodes-base.emailSend", position: [680, 300] }
+      ],
+      connections: {}
+    }, null, 2),
   },
   {
     id: "6",
@@ -302,6 +362,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-02-20",
     nodes: 25,
     complexity: "Avancé",
+    pipeline: ["Telegram", "OpenAI", "Pinecone", "Zendesk"],
+    n8nJson: JSON.stringify({
+      name: "AI Customer Support Agent",
+      nodes: [
+        { name: "Incoming User Message", type: "n8n-nodes-base.telegramTrigger", position: [200, 300] },
+        { name: "Vector Search Pinecone", type: "n8n-nodes-base.pinecone", position: [440, 220] },
+        { name: "OpenAI GPT-4 Response", type: "n8n-nodes-base.openAi", position: [440, 380] },
+        { name: "Escalate Zendesk", type: "n8n-nodes-base.zendesk", position: [700, 300] }
+      ],
+      connections: {}
+    }, null, 2),
   },
   {
     id: "7",
@@ -318,7 +389,7 @@ export const workflows: Workflow[] = [
 - Restauration en 1 clic
 
 **Outils utilisés :** n8n, PostgreSQL, AWS S3, Slack`,
-    price: 19,
+    price: 0,
     category: "dev",
     tags: ["backup", "base de données", "sécurité", "aws"],
     image: "/workflows/backup.png",
@@ -329,6 +400,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-05-01",
     nodes: 10,
     complexity: "Débutant",
+    pipeline: ["Cron", "PostgreSQL", "AWS S3", "Slack"],
+    n8nJson: JSON.stringify({
+      name: "Daily PostgreSQL S3 Backup",
+      nodes: [
+        { name: "Midnight Cron", type: "n8n-nodes-base.scheduleTrigger", position: [200, 300] },
+        { name: "Execute pg_dump", type: "n8n-nodes-base.executeCommand", position: [440, 300] },
+        { name: "Upload AWS S3", type: "n8n-nodes-base.awsS3", position: [680, 300] },
+        { name: "Slack Status Notification", type: "n8n-nodes-base.slack", position: [900, 300] }
+      ],
+      connections: {}
+    }, null, 2),
   },
   {
     id: "8",
@@ -356,6 +438,17 @@ export const workflows: Workflow[] = [
     createdAt: "2025-03-18",
     nodes: 16,
     complexity: "Intermédiaire",
+    pipeline: ["Notion", "OpenAI", "LinkedIn", "Twitter/X"],
+    n8nJson: JSON.stringify({
+      name: "Social Media Cross-Poster",
+      nodes: [
+        { name: "Notion Editorial Calendar", type: "n8n-nodes-base.notionTrigger", position: [200, 300] },
+        { name: "Format & Polish AI", type: "n8n-nodes-base.openAi", position: [450, 300] },
+        { name: "Publish LinkedIn", type: "n8n-nodes-base.linkedIn", position: [700, 200] },
+        { name: "Publish X / Twitter", type: "n8n-nodes-base.twitter", position: [700, 400] }
+      ],
+      connections: {}
+    }, null, 2),
   },
 ];
 
